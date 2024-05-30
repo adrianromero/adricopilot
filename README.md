@@ -1,2 +1,3 @@
-# mybuddy
-MYBUDDY is as experiment of a LLM application
+# MYBUDDY
+
+MYBUDDY is an experiment of a LLM application

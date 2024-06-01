@@ -17,12 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Box from "@mui/material/Box";
-import { AppBar, Button, IconButton, TextField, Toolbar, Typography } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Button, IconButton, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+
+import ActionsBar from "./components/ActionsBar";
+import Generation from "./components/Generation";
 
 function App(): JSX.Element {
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <Box sx={{ display: "flex" }}>
         <AppBar position="static">
           <Toolbar>
@@ -43,7 +46,7 @@ function App(): JSX.Element {
         </AppBar>
       </Box>
       <Box
-        sx={{ display: "flex", p: 1, gap: 1, bgcolor: "background.paper" }}
+        sx={{ display: "flex", p: 1, gap: 1, flexGrow: 1, bgcolor: "background.paper" }}
       >
         <Box component="form"
           noValidate
@@ -60,10 +63,18 @@ function App(): JSX.Element {
           <TextField id="standard-basic" label="Prompt" variant="filled"
             multiline
             rows={4} />
+          <ActionsBar />
         </Box>
-        <Box sx={{ flexGrow: 1 }}>Item 2</Box>
-      </Box>
-    </>
+        <Stack sx={{ flexGrow: 1 }}
+          direction="column"
+          justifyContent="flex-end"
+          alignItems="flex-start"
+          spacing={1}
+        >
+          <Generation />
+        </Stack>
+      </Box >
+    </Box>
   );
 }
 

@@ -16,35 +16,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { JSX } from "react";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Link from "@mui/material/Link";
-import ProTip from "./ProTip";
+import { AppBar, Button, IconButton, TextField, Toolbar, Typography } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
 
-
-function Copyright(): JSX.Element {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      Copyright © Adrián Romero
-      {" "}{new Date().getFullYear()}.
-    </Typography>
-  );
-}
 function App(): JSX.Element {
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-          <Link color="inherit" href="https://github.com/adrianromero/mybuddy">
-            MYBUDDY
-          </Link>{" "}
-          is starting its path...
-        </Typography>
-        <ProTip />
-        <Copyright />
+    <>
+      <Box sx={{ display: "flex" }}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              MYBUDDY
+            </Typography>
+            <Button color="inherit">Login</Button>
+          </Toolbar>
+        </AppBar>
       </Box>
-    </Container>
+      <Box
+        sx={{ display: "flex", p: 1, gap: 1, bgcolor: "background.paper" }}
+      >
+        <Box component="form"
+          noValidate
+          autoComplete="off"
+          sx={{
+            display: 'flex',
+            flexDirection: "column",
+            gap: 1,
+            '& .MuiTextField-root': { gap: 1, width: '50ch' }
+          }}>
+          <TextField id="filled-basic" label="System prompt" variant="filled"
+            multiline
+            rows={4} />
+          <TextField id="standard-basic" label="Prompt" variant="filled"
+            multiline
+            rows={4} />
+        </Box>
+        <Box sx={{ flexGrow: 1 }}>Item 2</Box>
+      </Box>
+    </>
   );
 }
 

@@ -30,7 +30,9 @@ function App(): JSX.Element {
     const dispatch: AppDispatch = useDispatch();
 
     return (<Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, bgcolor: "background.paper" }}>
-        <Button variant="contained" size="small">Small</Button>
+        <Button variant="contained" size="small"
+            onClick={() => llm.doGenerate()}
+        >Small</Button>
         <Button
             variant="contained"
             size="small"

@@ -26,7 +26,7 @@ function App(): JSX.Element {
     const markdown = useAppSelector(selectValue);
 
     return (<>
-        <Paper sx={{ p: 1, alignSelf: "flex-end" }}>
+        <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
             <Markdown>{markdown}</Markdown>
         </Paper>
     </>);

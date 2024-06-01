@@ -17,13 +17,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import React, { useContext } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "./store";
+import { setValue } from "../features/llm/llmSlice";
 
 export type LLMContextType = {
-    doAlert: () => void
+    doAlert: () => void;
+    doGenerate: () => void;
 };
 
 const emptyLLMContext = {
-    doAlert: () => { }
+    doAlert: () => { },
+    doGenerate: () => { }
 };
 
 export const LLMContext = React.createContext<LLMContextType>(emptyLLMContext);
@@ -31,9 +36,67 @@ export const useLLMContext = () => useContext(LLMContext);
 
 const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
+    const dispatch: AppDispatch = useDispatch();
+
     const doAlert = () => alert("Hello!!!!");
+
+    const generate = async () => {
+
+        const data = {
+            "model": "llama3",
+            "system": "You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: \"1st language features\" and  \"2nd language features\".",
+            "prompt": "Compare \"Rust\" and \"Java\"",
+            "stream": true
+        }
+
+        dispatch(setValue("Starting..."));
+
+        const response = await fetch("http://localhost:11434/api/generate", {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "error",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(data),
+        });
+
+        const body = response.body;
+        if (body === null) {
+            return "Error!!!";
+        }
+
+
+        let result = "";
+        const reader = body.getReader();
+        const decoder = new TextDecoder();
+        do {
+            const { done, value } = await reader.read();
+            if (value) {
+                const chunk = JSON.parse(decoder.decode(value)); // a risk of exception
+                result += chunk.response as string;
+                dispatch(setValue(result));
+            }
+            if (done) {
+                break;
+            }
+        } while (true);
+
+        return result;
+    }
+
+    const doGenerate = () => {
+        generate().then((result) => {
+            // repite un poco
+            dispatch(setValue(result));
+        });
+    }
+
+
     return (
-        <LLMContext.Provider value={{ doAlert }}>
+        <LLMContext.Provider value={{ doAlert, doGenerate }}>
             {children}
         </LLMContext.Provider>
     );

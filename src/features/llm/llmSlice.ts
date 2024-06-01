@@ -19,32 +19,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 
-interface CounterState {
-    value: number
+interface LLMState {
+    value: string
 }
 
-const initialState: CounterState = {
-    value: 0,
+const initialState: LLMState = {
+    value: "Initial simple value",
 }
 
 export const llmSlice = createSlice({
     name: "llm",
     initialState,
     reducers: {
-        increment: (state) => {
-            state.value += 1;
-        },
-        decrement: (state) => {
-            state.value -= 1;
-        },
-        incrementByAmount: (state, action: PayloadAction<number>) => {
-            state.value += action.payload;
-        },
+        setValue: (state, action: PayloadAction<string>) => {
+            state.value = action.payload;
+        }
     },
 })
 
 // const dispatch: AppDispatch = useDispatch()
 // dispatch(decrement())
-export const { increment, decrement, incrementByAmount } = llmSlice.actions
-// const count = useAppSelector(selectCount);
-export const selectCount = (state: RootState) => state.llm.value;
+export const { setValue } = llmSlice.actions
+// const value = useAppSelector(selectValue);
+export const selectValue = (state: RootState) => state.llm.value;

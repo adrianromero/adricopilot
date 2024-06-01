@@ -18,9 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { JSX } from "react";
 import Markdown from "react-markdown";
 import { Paper } from "@mui/material";
+import { useAppSelector } from "../app/hooks";
+import { selectValue } from "../features/llm/llmSlice";
 
 function App(): JSX.Element {
-    const markdown = '# Hi, *Pluto*!'
+
+    const markdown = useAppSelector(selectValue);
 
     return (<>
         <Paper sx={{ p: 1, alignSelf: "flex-end" }}>

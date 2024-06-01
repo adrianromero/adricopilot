@@ -19,12 +19,17 @@ import { JSX } from "react";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
+import { useLLMContext } from "../app/LLMContext";
 
 function App(): JSX.Element {
+
+    const llm = useLLMContext();
+
     return (<Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, bgcolor: "background.paper" }}>
         <Button variant="contained" size="small">Small</Button>
         <Button variant="contained" size="small">Medium</Button>
-        <Button variant="contained" size="small" endIcon={<SendIcon />}>Send</Button>
+        <Button variant="contained" size="small" endIcon={<SendIcon />}
+            onClick={() => llm.doAlert()}>Send</Button>
     </Box>);
 }
 

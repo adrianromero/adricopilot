@@ -21,7 +21,7 @@ import { llmSlice } from "../features/llm/llmSlice";
 
 const rootReducer = combineSlices(llmSlice);
 
-const store = configureStore({
+export const store = configureStore({
     reducer: rootReducer
 });
 

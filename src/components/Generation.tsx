@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import { Paper, Stack } from "@mui/material";
+import { Paper } from "@mui/material";
 
 function App(): JSX.Element {
     const markdown = '# Hi, *Pluto*!'

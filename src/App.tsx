@@ -1,5 +1,5 @@
 /*
-MYBUDDY
+ADRICOPILOT
 Copyright (C) 2024 Adrián Romero
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ function App(): JSX.Element {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              MYBUDDY
+              ADRICOPILOT
             </Typography>
             <Button color="inherit">Login</Button>
           </Toolbar>

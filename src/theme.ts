@@ -1,5 +1,5 @@
 /*
-MYBUDDY
+ADRICOPILOT
 Copyright (C) 2024 Adrián Romero
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createTheme, Theme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 
-// MYBUDDY custom theme for this app
+// ADRICOPILOT custom theme for this app
 const theme: Theme = createTheme({
   palette: {
     primary: {

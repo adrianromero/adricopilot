@@ -17,12 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import SendIcon from "@mui/icons-material/Send";
 import { useLLMContext } from "../app/LLMContext";
+import { useAppSelector } from "../app/hooks";
+import { selectStatus } from "../features/llm/llmSlice";
 
-function App(): JSX.Element {
+function ActionBar(): JSX.Element {
   const llm = useLLMContext();
+  const status = useAppSelector(selectStatus);
 
   return (
     <Box
@@ -33,19 +36,18 @@ function App(): JSX.Element {
         bgcolor: "background.paper",
       }}
     >
-      <Button variant="contained" size="small" onClick={() => llm.doAlert()}>
-        Medium
-      </Button>
-      <Button
+      <LoadingButton
         variant="contained"
         size="small"
         endIcon={<SendIcon />}
+        loading={status !== "READY"}
+        loadingPosition="end"
         onClick={() => llm.doGenerate()}
       >
         Send
-      </Button>
+      </LoadingButton>
     </Box>
   );
 }
 
-export default App;
+export default ActionBar;

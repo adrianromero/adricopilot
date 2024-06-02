@@ -30,6 +30,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 import ActionsBar from "./components/ActionsBar";
 import Generation from "./components/Generation";
+import ChatErrorDialog from "./components/ChatErrorDialog";
 
 function App(): JSX.Element {
   return (
@@ -99,6 +100,7 @@ function App(): JSX.Element {
           <Generation />
         </Stack>
       </Box>
+      <ChatErrorDialog />
     </Box>
   );
 }

@@ -19,17 +19,18 @@ import React, { useContext } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "./store";
 import {
-  createChatMessage,
-  addChatMessageGeneration,
+  startChatMessage,
+  addChatMessage,
+  successChatMessage,
+  failureChatMessage,
+  ChatInformation,
 } from "../features/llm/llmSlice";
 
 export type LLMContextType = {
-  doAlert: () => void;
   doGenerate: () => void;
 };
 
 const emptyLLMContext = {
-  doAlert: () => {},
   doGenerate: () => {},
 };
 
@@ -41,9 +42,7 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const dispatch: AppDispatch = useDispatch();
 
-  const doAlert = () => alert("Hello!!!!");
-
-  const generate = async () => {
+  const generate = async (): Promise<ChatInformation> => {
     const data = {
       model: "llama3",
       system:
@@ -54,8 +53,6 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
         num_predict: 50,
       },
     };
-
-    dispatch(createChatMessage());
 
     const response = await fetch("http://localhost:11434/api/generate", {
       method: "POST",
@@ -76,33 +73,61 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const reader = body.getReader();
     const decoder = new TextDecoder();
+    let info: ChatInformation = {
+      result: "SUCCESS",
+      done_reason: "unknown",
+      total_duration: 0,
+      load_duration: 0,
+      prompt_eval_count: 0,
+      prompt_eval_duration: 0,
+      eval_count: 0,
+      eval_duration: 0,
+    };
     do {
       const { done, value } = await reader.read();
       if (value) {
         const chunk = JSON.parse(decoder.decode(value)); // a risk of exception
         const result = chunk.response as string;
-        dispatch(addChatMessageGeneration(result));
+        console.log("done reason " + chunk.done_reason);
+        dispatch(addChatMessage(result));
+        if (chunk.done as boolean) {
+          info = {
+            result: "SUCCESS",
+            done_reason: chunk.done_reason as string,
+            total_duration: chunk.done_duration as number,
+            load_duration: chunk.load_duration as number,
+            prompt_eval_count: chunk.prompt_eval_count as number,
+            prompt_eval_duration: chunk.prompt_eval_duration as number,
+            eval_count: chunk.eval_count as number,
+            eval_duration: chunk.eval_duration as number,
+          };
+        }
       }
       if (done) {
         break;
       }
     } while (true);
+    return info;
   };
 
   const doGenerate = () => {
+    dispatch(startChatMessage());
     generate()
-      .then(() => {
-        // SUCCESS
+      .then(info => {
+        dispatch(successChatMessage(info));
       })
-      .catch(error => {
-        // Error
+      .catch(() => {
+        dispatch(
+          failureChatMessage({
+            result: "ERROR",
+            message: "Error generating message...",
+          })
+        );
       });
   };
 
   return (
-    <LLMContext.Provider value={{ doAlert, doGenerate }}>
-      {children}
-    </LLMContext.Provider>
+    <LLMContext.Provider value={{ doGenerate }}>{children}</LLMContext.Provider>
   );
 };
 

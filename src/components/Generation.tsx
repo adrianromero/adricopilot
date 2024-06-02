@@ -17,9 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import { Paper } from "@mui/material";
+import { CircularProgress, Paper, Typography } from "@mui/material";
 import { useAppSelector } from "../app/hooks";
-import { selectChat, ChatMessage } from "../features/llm/llmSlice";
+import {
+  selectChat,
+  ChatMessage,
+  selectGenerating,
+} from "../features/llm/llmSlice";
+import DotsPulse from "./DotsPulse";
 
 interface GenerationMessageProps {
   chatMessage: ChatMessage;
@@ -31,17 +36,46 @@ function GenerationMessage({
   return (
     <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
       <Markdown>{chatMessage.text}</Markdown>
+      <div style={{ position: "relative", height: "10px" }}>
+        <div style={{ position: "absolute", bottom: 0, right: 0 }}></div>
+      </div>
+    </Paper>
+  );
+}
+
+function GeneratingMessage(): JSX.Element | null {
+  const chatMessage = useAppSelector(selectGenerating);
+  if (chatMessage === null) {
+    return null;
+  }
+  const text = chatMessage.text;
+  return (
+    <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
+      {text ? (
+        <Markdown>{text}</Markdown>
+      ) : (
+        <Typography variant="caption" display="block">
+          Starting...
+        </Typography>
+      )}
+      <div style={{ position: "relative", height: "10px" }}>
+        <div style={{ position: "absolute", bottom: 0, right: 0 }}>
+          <DotsPulse />
+        </div>
+      </div>
     </Paper>
   );
 }
 
 function Generation(): JSX.Element {
   const chat = useAppSelector(selectChat);
+  //TODO: key for each element in the list
   return (
     <>
       {chat.map(chatMessage => (
-        <GenerationMessage chatMessage={chatMessage} />
+        <GenerationMessage key={chatMessage.key} chatMessage={chatMessage} />
       ))}
+      <GeneratingMessage key="generatingmessage" />
     </>
   );
 }

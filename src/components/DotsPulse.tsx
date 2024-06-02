@@ -15,23 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createTheme, Theme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
-import type {} from "@mui/lab/themeAugmentation";
+import { JSX } from "react";
+import "./DotsPulse.css";
 
-// ADRICOPILOT custom theme for this app
-const theme: Theme = createTheme({
-  palette: {
-    primary: {
-      main: "#556cd6",
-    },
-    secondary: {
-      main: "#19857b",
-    },
-    error: {
-      main: red.A400,
-    },
-  },
-});
+function DotsPulse(): JSX.Element {
+  return (
+    <div style={{ position: "relative", width: "50px", height: "10px" }}>
+      <div style={{ position: "absolute", left: "20px" }}>
+        <div className="dot-pulse" />
+      </div>
+    </div>
+  );
+}
 
-export default theme;
+export default DotsPulse;

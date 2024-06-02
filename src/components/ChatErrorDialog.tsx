@@ -17,44 +17,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import {
+  Alert,
+  AlertTitle,
   Button,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 import { useAppSelector } from "../app/hooks";
-import {
-  cleanErrorDialogMessage,
-  selectErrorDialogMessage,
-} from "../features/llm/llmSlice";
+import { closeAlert, selectAlert } from "../features/llm/llmSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../app/store";
 
 function ChatErrorDialog(): JSX.Element | null {
-  const errorDialogMessage = useAppSelector(selectErrorDialogMessage);
+  const alert = useAppSelector(selectAlert);
   const dispatch: AppDispatch = useDispatch();
-  const open = errorDialogMessage !== null;
-  const description = errorDialogMessage ? errorDialogMessage : "Unknown error";
 
   const handleClose = () => {
-    dispatch(cleanErrorDialogMessage());
+    dispatch(closeAlert());
   };
 
   return (
     <Dialog
-      open={open}
+      open={alert.open}
       onClose={handleClose}
+      fullWidth={true}
+      maxWidth="xs"
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">ADRCOPILOT</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          {description}
-        </DialogContentText>
-      </DialogContent>
+      <Alert severity={alert.severity}>
+        <AlertTitle id="alert-dialog-title">Error</AlertTitle>
+        <div id="alert-dialog-description">{alert.description}</div>
+      </Alert>
+
       <DialogActions>
         <Button onClick={handleClose} autoFocus>
           OK

@@ -17,7 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import { CircularProgress, Paper, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Chip, IconButton, Paper, Typography } from "@mui/material";
 import { useAppSelector } from "../app/hooks";
 import {
   selectChat,
@@ -34,10 +35,28 @@ function GenerationMessage({
   chatMessage,
 }: GenerationMessageProps): JSX.Element {
   return (
-    <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
+    <Paper
+      sx={{
+        p: 1,
+        alignSelf: "stretch",
+        backgroundColor: "#e5f6fd",
+        borderRadius: "16px",
+      }}
+    >
       <Markdown>{chatMessage.text}</Markdown>
       <div style={{ position: "relative", height: "10px" }}>
-        <div style={{ position: "absolute", bottom: 0, right: 0 }}></div>
+        <div style={{ position: "absolute", bottom: 0, right: 0 }}>
+          <IconButton aria-label="delete" size="small">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+          <IconButton aria-label="delete" size="small">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+          <IconButton aria-label="delete" size="small">
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+          <Chip label="Success" color="success" size="small" />
+        </div>
       </div>
     </Paper>
   );
@@ -50,7 +69,14 @@ function GeneratingMessage(): JSX.Element | null {
   }
   const text = chatMessage.text;
   return (
-    <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
+    <Paper
+      sx={{
+        p: 1,
+        alignSelf: "stretch",
+        backgroundColor: "#e5f6fd",
+        borderRadius: "16px",
+      }}
+    >
       {text ? (
         <Markdown>{text}</Markdown>
       ) : (

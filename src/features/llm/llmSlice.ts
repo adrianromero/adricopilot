@@ -40,18 +40,25 @@ export interface ChatMessage {
   info: ChatInformation | ChatError | null;
 }
 
+export interface LLMAlert {
+  open: boolean;
+  severity: "error" | "info" | "success" | "warning";
+  description: string;
+}
+
 interface LLMState {
   status: "READY" | "GENERATING";
   generating: ChatMessage | null;
   chat: ChatMessage[];
-  errorDialogMessage: string | null;
+  alert: LLMAlert;
 }
 
 const initialState: LLMState = {
   status: "READY",
   generating: null,
   chat: [],
-  errorDialogMessage: null,
+
+  alert: { open: false, severity: "success", description: "" },
 };
 
 const KEYCHARS =
@@ -91,13 +98,17 @@ export const llmSlice = createSlice({
         state.chat.push(state.generating!);
       } else {
         //  No error generated. Discard generating message;
-        state.errorDialogMessage = action.payload.message;
+        state.alert = {
+          open: true,
+          severity: "error",
+          description: action.payload.message,
+        };
       }
       state.generating = null;
       state.status = "READY";
     },
-    cleanErrorDialogMessage: state => {
-      state.errorDialogMessage = null;
+    closeAlert: state => {
+      state.alert.open = false;
     },
   },
 });
@@ -109,11 +120,10 @@ export const {
   addChatMessage,
   successChatMessage,
   failureChatMessage,
-  cleanErrorDialogMessage,
+  closeAlert,
 } = llmSlice.actions;
 // const value = useAppSelector(selectChat);
 export const selectChat = (state: RootState) => state.llm.chat;
 export const selectGenerating = (state: RootState) => state.llm.generating;
 export const selectStatus = (state: RootState) => state.llm.status;
-export const selectErrorDialogMessage = (state: RootState) =>
-  state.llm.errorDialogMessage;
+export const selectAlert = (state: RootState) => state.llm.alert;

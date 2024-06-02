@@ -15,18 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { ThemeProvider } from '@emotion/react';
-import { CssBaseline } from '@mui/material';
-import { Provider } from 'react-redux';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ThemeProvider } from "@emotion/react";
+import { CssBaseline } from "@mui/material";
+import { Provider } from "react-redux";
 
-import theme from './theme';
-import App from './App'
-import { store } from "./app/store"
-import LLMContextProvider from './app/LLMContext';
+import theme from "./theme";
+import App from "./App";
+import { store } from "./app/store";
+import LLMContextProvider from "./app/LLMContext";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -36,5 +36,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </LLMContextProvider>
       </Provider>
     </ThemeProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

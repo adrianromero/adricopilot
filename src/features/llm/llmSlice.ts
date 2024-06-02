@@ -15,30 +15,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 
+export interface ChatMessage {
+  text: string;
+}
+
 interface LLMState {
-    value: string
+  chat: ChatMessage[];
 }
 
 const initialState: LLMState = {
-    value: "Initial simple value",
-}
+  chat: [],
+};
 
 export const llmSlice = createSlice({
-    name: "llm",
-    initialState,
-    reducers: {
-        setValue: (state, action: PayloadAction<string>) => {
-            state.value = action.payload;
-        }
+  name: "llm",
+  initialState,
+  reducers: {
+    createChatMessage: state => {
+      state.chat.push({ text: "" });
     },
-})
+    addChatMessageGeneration: (state, action: PayloadAction<string>) => {
+      state.chat[state.chat.length - 1].text += action.payload;
+    },
+  },
+});
 
 // const dispatch: AppDispatch = useDispatch()
 // dispatch(decrement())
-export const { setValue } = llmSlice.actions
+export const { createChatMessage, addChatMessageGeneration } = llmSlice.actions;
 // const value = useAppSelector(selectValue);
-export const selectValue = (state: RootState) => state.llm.value;
+export const selectChat = (state: RootState) => state.llm.chat;

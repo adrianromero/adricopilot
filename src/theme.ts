@@ -15,22 +15,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createTheme, Theme } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
+import { createTheme, Theme } from "@mui/material/styles";
+import { red } from "@mui/material/colors";
 
 // MYBUDDY custom theme for this app
 const theme: Theme = createTheme({
-    palette: {
-        primary: {
-            main: '#556cd6',
-        },
-        secondary: {
-            main: '#19857b',
-        },
-        error: {
-            main: red.A400,
-        },
+  palette: {
+    primary: {
+      main: "#556cd6",
     },
+    secondary: {
+      main: "#19857b",
+    },
+    error: {
+      main: red.A400,
+    },
+  },
 });
 
 export default theme;

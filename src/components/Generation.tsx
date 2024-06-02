@@ -19,17 +19,31 @@ import { JSX } from "react";
 import Markdown from "react-markdown";
 import { Paper } from "@mui/material";
 import { useAppSelector } from "../app/hooks";
-import { selectValue } from "../features/llm/llmSlice";
+import { selectChat, ChatMessage } from "../features/llm/llmSlice";
 
-function App(): JSX.Element {
-
-    const markdown = useAppSelector(selectValue);
-
-    return (<>
-        <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
-            <Markdown>{markdown}</Markdown>
-        </Paper>
-    </>);
+interface GenerationMessageProps {
+  chatMessage: ChatMessage;
 }
 
-export default App;
+function GenerationMessage({
+  chatMessage,
+}: GenerationMessageProps): JSX.Element {
+  return (
+    <Paper sx={{ p: 1, alignSelf: "stretch", backgroundColor: "#e5f6fd" }}>
+      <Markdown>{chatMessage.text}</Markdown>
+    </Paper>
+  );
+}
+
+function Generation(): JSX.Element {
+  const chat = useAppSelector(selectChat);
+  return (
+    <>
+      {chat.map(chatMessage => (
+        <GenerationMessage chatMessage={chatMessage} />
+      ))}
+    </>
+  );
+}
+
+export default Generation;

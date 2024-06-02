@@ -18,11 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { configureStore, combineSlices } from "@reduxjs/toolkit";
 import { llmSlice } from "../features/llm/llmSlice";
 
-
 const rootReducer = combineSlices(llmSlice);
 
 export const store = configureStore({
-    reducer: rootReducer
+  reducer: rootReducer,
 });
 
 export type AppStore = typeof store;

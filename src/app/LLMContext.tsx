@@ -1,4 +1,3 @@
-
 /*
 MYBUDDY
 Copyright (C) 2024 Adrián Romero
@@ -19,87 +18,92 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useContext } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "./store";
-import { setValue } from "../features/llm/llmSlice";
+import {
+  createChatMessage,
+  addChatMessageGeneration,
+} from "../features/llm/llmSlice";
 
 export type LLMContextType = {
-    doAlert: () => void;
-    doGenerate: () => void;
+  doAlert: () => void;
+  doGenerate: () => void;
 };
 
 const emptyLLMContext = {
-    doAlert: () => { },
-    doGenerate: () => { }
+  doAlert: () => {},
+  doGenerate: () => {},
 };
 
 export const LLMContext = React.createContext<LLMContextType>(emptyLLMContext);
 export const useLLMContext = () => useContext(LLMContext);
 
-const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const dispatch: AppDispatch = useDispatch();
 
-    const dispatch: AppDispatch = useDispatch();
+  const doAlert = () => alert("Hello!!!!");
 
-    const doAlert = () => alert("Hello!!!!");
+  const generate = async () => {
+    const data = {
+      model: "llama3",
+      system:
+        'You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: "1st language features" and  "2nd language features".',
+      prompt: 'Compare "Rust" and "Go"',
+      stream: true,
+      options: {
+        num_predict: 50,
+      },
+    };
 
-    const generate = async () => {
+    dispatch(createChatMessage());
 
-        const data = {
-            "model": "llama3",
-            "system": "You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: \"1st language features\" and  \"2nd language features\".",
-            "prompt": "Compare \"Rust\" and \"Java\"",
-            "stream": true
-        }
+    const response = await fetch("http://localhost:11434/api/generate", {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "error",
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify(data),
+    });
 
-        dispatch(setValue("Starting..."));
-
-        const response = await fetch("http://localhost:11434/api/generate", {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "error",
-            referrerPolicy: "no-referrer",
-            body: JSON.stringify(data),
-        });
-
-        const body = response.body;
-        if (body === null) {
-            return "Error!!!";
-        }
-
-
-        let result = "";
-        const reader = body.getReader();
-        const decoder = new TextDecoder();
-        do {
-            const { done, value } = await reader.read();
-            if (value) {
-                const chunk = JSON.parse(decoder.decode(value)); // a risk of exception
-                result += chunk.response as string;
-                dispatch(setValue(result));
-            }
-            if (done) {
-                break;
-            }
-        } while (true);
-
-        return result;
+    const body = response.body;
+    if (body === null) {
+      throw new Error("Error!!!");
     }
 
-    const doGenerate = () => {
-        generate().then((result) => {
-            // repite un poco
-            dispatch(setValue(result));
-        });
-    }
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    do {
+      const { done, value } = await reader.read();
+      if (value) {
+        const chunk = JSON.parse(decoder.decode(value)); // a risk of exception
+        const result = chunk.response as string;
+        dispatch(addChatMessageGeneration(result));
+      }
+      if (done) {
+        break;
+      }
+    } while (true);
+  };
 
+  const doGenerate = () => {
+    generate()
+      .then(() => {
+        // SUCCESS
+      })
+      .catch(error => {
+        // Error
+      });
+  };
 
-    return (
-        <LLMContext.Provider value={{ doAlert, doGenerate }}>
-            {children}
-        </LLMContext.Provider>
-    );
+  return (
+    <LLMContext.Provider value={{ doAlert, doGenerate }}>
+      {children}
+    </LLMContext.Provider>
+  );
 };
 
 export default LLMContextProvider;

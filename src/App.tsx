@@ -17,7 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Box from "@mui/material/Box";
-import { AppBar, Button, IconButton, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Stack,
+  TextField,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import ActionsBar from "./components/ActionsBar";
@@ -46,26 +54,43 @@ function App(): JSX.Element {
         </AppBar>
       </Box>
       <Box
-        sx={{ display: "flex", p: 1, gap: 1, flexGrow: 1, bgcolor: "background.paper" }}
+        sx={{
+          display: "flex",
+          p: 1,
+          gap: 1,
+          flexGrow: 1,
+          bgcolor: "background.paper",
+        }}
       >
-        <Box component="form"
+        <Box
+          component="form"
           noValidate
           autoComplete="off"
           sx={{
-            display: 'flex',
+            display: "flex",
             flexDirection: "column",
             gap: 1,
-            '& .MuiTextField-root': { gap: 1, width: '50ch' }
-          }}>
-          <TextField id="filled-basic" label="System prompt" variant="filled"
+            "& .MuiTextField-root": { gap: 1, width: "50ch" },
+          }}
+        >
+          <TextField
+            id="filled-basic"
+            label="System prompt"
+            variant="filled"
             multiline
-            rows={4} />
-          <TextField id="standard-basic" label="Prompt" variant="filled"
+            rows={4}
+          />
+          <TextField
+            id="standard-basic"
+            label="Prompt"
+            variant="filled"
             multiline
-            rows={4} />
+            rows={4}
+          />
           <ActionsBar />
         </Box>
-        <Stack sx={{ flexGrow: 1 }}
+        <Stack
+          sx={{ flexGrow: 1 }}
           direction="column"
           justifyContent="flex-end"
           alignItems="flex-start"
@@ -73,7 +98,7 @@ function App(): JSX.Element {
         >
           <Generation />
         </Stack>
-      </Box >
+      </Box>
     </Box>
   );
 }

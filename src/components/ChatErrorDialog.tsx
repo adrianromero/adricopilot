@@ -46,7 +46,7 @@ function ChatErrorDialog(): JSX.Element | null {
       aria-describedby="alert-dialog-description"
     >
       <Alert severity={alert.severity}>
-        <AlertTitle id="alert-dialog-title">Error</AlertTitle>
+        <AlertTitle id="alert-dialog-title">{alert.title}</AlertTitle>
         <div id="alert-dialog-description">{alert.description}</div>
       </Alert>
 

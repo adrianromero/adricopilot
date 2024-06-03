@@ -48,6 +48,7 @@ export interface ChatMessage {
 export interface LLMAlert {
   open: boolean;
   severity: "error" | "info" | "success" | "warning";
+  title: string;
   description: string;
 }
 
@@ -63,7 +64,7 @@ const initialState: LLMState = {
   generating: null,
   chat: [],
 
-  alert: { open: false, severity: "success", description: "" },
+  alert: { open: false, severity: "success", title: "", description: "" },
 };
 
 const KEYCHARS =
@@ -110,6 +111,7 @@ export const llmSlice = createSlice({
         state.alert = {
           open: true,
           severity: "error",
+          title: "Error generating message",
           description: action.payload.description,
         };
       }

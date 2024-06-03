@@ -50,7 +50,7 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
       prompt: 'Compare "Rust" and "Go"',
       stream: true,
       options: {
-        // num_predict: 50,
+        num_predict: 25,
       },
     };
 
@@ -119,11 +119,17 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
       .then(info => {
         dispatch(successChatMessage(info));
       })
-      .catch(() => {
+      .catch(error => {
+        let description;
+        if (error instanceof Error) {
+          description = error.message;
+        } else {
+          description = "Unknown error generating message";
+        }
         dispatch(
           failureChatMessage({
             result: "ERROR",
-            description: "Error generating message...",
+            description,
           })
         );
       });

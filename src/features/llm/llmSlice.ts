@@ -18,8 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 
-export interface ChatInformation {
+export interface ChatGenerating {
+  result: "GENERATING";
+}
+
+export interface ChatSuccess {
   result: "SUCCESS";
+  description: string; // An info description
   done_reason: string;
   total_duration: number;
   load_duration: number;
@@ -31,13 +36,13 @@ export interface ChatInformation {
 
 export interface ChatError {
   result: "ERROR";
-  message: string;
+  description: string;
 }
 
 export interface ChatMessage {
   key: string;
   text: string;
-  info: ChatInformation | ChatError | null;
+  info: ChatGenerating | ChatSuccess | ChatError;
 }
 
 export interface LLMAlert {
@@ -80,12 +85,16 @@ export const llmSlice = createSlice({
   reducers: {
     startChatMessage: state => {
       state.status = "GENERATING";
-      state.generating = { key: generateKey(), text: "", info: null };
+      state.generating = {
+        key: generateKey(),
+        text: "",
+        info: { result: "GENERATING" },
+      };
     },
     addChatMessage: (state, action: PayloadAction<string>) => {
       state.generating!.text += action.payload;
     },
-    successChatMessage: (state, action: PayloadAction<ChatInformation>) => {
+    successChatMessage: (state, action: PayloadAction<ChatSuccess>) => {
       state.generating!.info = action.payload;
       state.chat.push(state.generating!);
       state.generating = null;
@@ -101,7 +110,7 @@ export const llmSlice = createSlice({
         state.alert = {
           open: true,
           severity: "error",
-          description: action.payload.message,
+          description: action.payload.description,
         };
       }
       state.generating = null;

@@ -17,8 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Chip, IconButton, Paper, Typography } from "@mui/material";
+import { Chip, Paper, Typography } from "@mui/material";
 import { useAppSelector } from "../app/hooks";
 import {
   selectChat,
@@ -34,40 +33,33 @@ interface GenerationMessageProps {
 function GenerationMessage({
   chatMessage,
 }: GenerationMessageProps): JSX.Element {
-  return (
-    <Paper
-      sx={{
-        p: 1,
-        alignSelf: "stretch",
-        backgroundColor: "#e5f6fd",
-        borderRadius: "16px",
-      }}
-    >
-      <Markdown>{chatMessage.text}</Markdown>
-      <div style={{ position: "relative", height: "10px" }}>
-        <div style={{ position: "absolute", bottom: 0, right: 0 }}>
-          <IconButton aria-label="delete" size="small">
+  let footer;
+  if (chatMessage.info.result === "GENERATING") {
+    footer = <DotsPulse />;
+  } else if (chatMessage.info.result === "ERROR") {
+    footer = (
+      <Chip label={chatMessage.info.description} color="warning" size="small" />
+    );
+  } else {
+    // SUCCESS
+    footer = (
+      <>
+        {/* <IconButton aria-label="delete" size="small">
             <DeleteIcon fontSize="small" />
-          </IconButton>
-          <IconButton aria-label="delete" size="small">
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-          <IconButton aria-label="delete" size="small">
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-          <Chip label="Success" color="success" size="small" />
-        </div>
-      </div>
-    </Paper>
-  );
-}
-
-function GeneratingMessage(): JSX.Element | null {
-  const chatMessage = useAppSelector(selectGenerating);
-  if (chatMessage === null) {
-    return null;
+          </IconButton> */}
+        {chatMessage.info.description && (
+          <Chip
+            label={chatMessage.info.description}
+            color="success"
+            size="small"
+          />
+        )}
+      </>
+    );
   }
+
   const text = chatMessage.text;
+
   return (
     <Paper
       sx={{
@@ -81,12 +73,12 @@ function GeneratingMessage(): JSX.Element | null {
         <Markdown>{text}</Markdown>
       ) : (
         <Typography variant="caption" display="block">
-          Starting...
+          Initialization...
         </Typography>
       )}
       <div style={{ position: "relative", height: "10px" }}>
         <div style={{ position: "absolute", bottom: 0, right: 0 }}>
-          <DotsPulse />
+          {footer}
         </div>
       </div>
     </Paper>
@@ -95,13 +87,18 @@ function GeneratingMessage(): JSX.Element | null {
 
 function Generation(): JSX.Element {
   const chat = useAppSelector(selectChat);
-  //TODO: key for each element in the list
+  const generatingChatMessage = useAppSelector(selectGenerating);
   return (
     <>
       {chat.map(chatMessage => (
         <GenerationMessage key={chatMessage.key} chatMessage={chatMessage} />
       ))}
-      <GeneratingMessage key="generatingmessage" />
+      {generatingChatMessage && (
+        <GenerationMessage
+          key="generatingmessage"
+          chatMessage={generatingChatMessage}
+        />
+      )}
     </>
   );
 }

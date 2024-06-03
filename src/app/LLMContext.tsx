@@ -23,7 +23,7 @@ import {
   addChatMessage,
   successChatMessage,
   failureChatMessage,
-  ChatInformation,
+  ChatSuccess,
 } from "../features/llm/llmSlice";
 
 export type LLMContextType = {
@@ -42,7 +42,7 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const dispatch: AppDispatch = useDispatch();
 
-  const generate = async (): Promise<ChatInformation> => {
+  const generate = async (): Promise<ChatSuccess> => {
     const data = {
       model: "llama3",
       system:
@@ -50,7 +50,7 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
       prompt: 'Compare "Rust" and "Go"',
       stream: true,
       options: {
-        num_predict: 50,
+        // num_predict: 50,
       },
     };
 
@@ -73,8 +73,9 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const reader = body.getReader();
     const decoder = new TextDecoder();
-    let info: ChatInformation = {
+    let info: ChatSuccess = {
       result: "SUCCESS",
+      description: "Unknown generation information",
       done_reason: "unknown",
       total_duration: 0,
       load_duration: 0,
@@ -91,9 +92,11 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log("done reason " + chunk.done_reason);
         dispatch(addChatMessage(result));
         if (chunk.done as boolean) {
+          const reason = chunk.done_reason as string;
           info = {
             result: "SUCCESS",
-            done_reason: chunk.done_reason as string,
+            description: reason === "length" ? "Max tokens generated" : "",
+            done_reason: reason,
             total_duration: chunk.done_duration as number,
             load_duration: chunk.load_duration as number,
             prompt_eval_count: chunk.prompt_eval_count as number,
@@ -120,7 +123,7 @@ const LLMContextProvider: React.FC<{ children: React.ReactNode }> = ({
         dispatch(
           failureChatMessage({
             result: "ERROR",
-            message: "Error generating message...",
+            description: "Error generating message...",
           })
         );
       });

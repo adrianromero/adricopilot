@@ -16,7 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../app/store";
 
 export interface ChatGenerating {
   result: "GENERATING";
@@ -122,6 +121,12 @@ export const llmSlice = createSlice({
       state.alert.open = false;
     },
   },
+  selectors: {
+    selectChat: (llm: LLMState) => llm.chat,
+    selectGenerating: (llm: LLMState) => llm.generating,
+    selectStatus: (llm: LLMState) => llm.status,
+    selectAlert: (llm: LLMState) => llm.alert,
+  },
 });
 
 // const dispatch: AppDispatch = useDispatch()
@@ -134,7 +139,5 @@ export const {
   closeAlert,
 } = llmSlice.actions;
 // const value = useAppSelector(selectChat);
-export const selectChat = (state: RootState) => state.llm.chat;
-export const selectGenerating = (state: RootState) => state.llm.generating;
-export const selectStatus = (state: RootState) => state.llm.status;
-export const selectAlert = (state: RootState) => state.llm.alert;
+export const { selectChat, selectGenerating, selectStatus, selectAlert } =
+  llmSlice.selectors;

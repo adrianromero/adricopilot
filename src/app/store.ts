@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { configureStore, combineSlices } from "@reduxjs/toolkit";
 import { llmSlice } from "../features/llm/llmSlice";
 
-const rootReducer = combineSlices(llmSlice);
+// Now, the combination of slides can be dynamic!!!
+const rootReducer = combineSlices(llmSlice, promptSlice);
 
 export const store = configureStore({
   reducer: rootReducer,

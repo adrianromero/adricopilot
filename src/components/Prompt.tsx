@@ -22,7 +22,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { TextField } from "@mui/material";
 
 import { useAppSelector } from "../app/hooks";
-import { selectStatus } from "../features/llm/llmSlice";
+import { selectStatus, pushPromptMessage } from "../features/llm/llmSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../app/store";
 import { generateLangCompare, generate, executor } from "./PromptFunction";
@@ -70,9 +70,10 @@ function Prompt(): JSX.Element {
           endIcon={<SendIcon />}
           loading={status !== "READY"}
           loadingPosition="end"
-          onClick={() =>
-            dispatchExecutor(generate({ system: "", prompt: value }))
-          }
+          onClick={() => {
+            dispatch(pushPromptMessage(value));
+            dispatchExecutor(generate({ system: "", prompt: value }));
+          }}
         >
           Joke
         </LoadingButton>

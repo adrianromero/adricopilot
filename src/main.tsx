@@ -24,16 +24,13 @@ import { Provider } from "react-redux";
 import theme from "./theme";
 import App from "./App";
 import { store } from "./app/store";
-import LLMContextProvider from "./app/LLMContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Provider store={store}>
-        <LLMContextProvider>
-          <App />
-        </LLMContextProvider>
+        <App />
       </Provider>
     </ThemeProvider>
   </React.StrictMode>

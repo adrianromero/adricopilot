@@ -22,13 +22,12 @@ import {
   Button,
   IconButton,
   Stack,
-  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
-import ActionsBar from "./components/ActionsBar";
+import Prompt from "./components/Prompt";
 import Generation from "./components/Generation";
 import ChatErrorDialog from "./components/ChatErrorDialog";
 
@@ -63,32 +62,8 @@ function App(): JSX.Element {
           bgcolor: "background.paper",
         }}
       >
-        <Box
-          component="form"
-          noValidate
-          autoComplete="off"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-            "& .MuiTextField-root": { gap: 1, width: "50ch" },
-          }}
-        >
-          <TextField
-            id="filled-basic"
-            label="System prompt"
-            variant="filled"
-            multiline
-            rows={4}
-          />
-          <TextField
-            id="standard-basic"
-            label="Prompt"
-            variant="filled"
-            multiline
-            rows={4}
-          />
-          <ActionsBar />
+        <Box>
+          <Prompt />
         </Box>
         <Stack
           sx={{ flexGrow: 1 }}

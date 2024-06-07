@@ -33,7 +33,7 @@ export default function GenerationChat({
     footer = <DotsPulse />;
   } else if (chatMessage.info.result === "ERROR") {
     footer = (
-      <Chip label={chatMessage.info.description} color="warning" size="small" />
+      <Chip label={chatMessage.info.description} color="error" size="small" />
     );
   } else {
     // SUCCESS
@@ -54,6 +54,22 @@ export default function GenerationChat({
   }
 
   const text = chatMessage.text;
+  let textcomponent;
+  if (!text) {
+    textcomponent = (
+      <Typography variant="caption" display="block">
+        ...
+      </Typography>
+    );
+  } else if (!text.trim()) {
+    textcomponent = (
+      <Typography variant="caption" display="block">
+        Empty generation...
+      </Typography>
+    );
+  } else {
+    textcomponent = <Markdown>{text}</Markdown>;
+  }
 
   return (
     <Paper
@@ -64,13 +80,7 @@ export default function GenerationChat({
         borderRadius: "16px",
       }}
     >
-      {text ? (
-        <Markdown>{text}</Markdown>
-      ) : (
-        <Typography variant="caption" display="block">
-          Initialization...
-        </Typography>
-      )}
+      {textcomponent}
       <div style={{ position: "relative", height: "10px" }}>
         <div style={{ position: "absolute", bottom: 0, right: 0 }}>
           {footer}

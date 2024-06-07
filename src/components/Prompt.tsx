@@ -17,29 +17,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX, useState } from "react";
 import Box from "@mui/material/Box";
-import { LoadingButton } from "@mui/lab";
-import SendIcon from "@mui/icons-material/Send";
-import { TextField } from "@mui/material";
 
-import { useAppSelector } from "../app/hooks";
-import { selectStatus, pushPromptMessage } from "../features/llm/llmSlice";
+import SendIcon from "@mui/icons-material/Send";
+import StopIcon from "@mui/icons-material/Stop";
+import { Button, TextField } from "@mui/material";
+
+import { pushPromptMessage } from "../features/llm/llmSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../app/store";
-import { generateLangCompare, generate, executor } from "./PromptFunction";
+import { generate, executor } from "./PromptFunction";
 
 function Prompt(): JSX.Element {
-  const status = useAppSelector(selectStatus);
   const dispatch: AppDispatch = useDispatch();
 
   const [value, setValue] = useState<string>("");
-
-  const dispatchExecutor = executor(dispatch);
+  const [controller, setController] = useState<AbortController | null>(null);
 
   return (
     <Box
-      component="form"
-      noValidate
-      autoComplete="off"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -64,33 +59,25 @@ function Prompt(): JSX.Element {
           bgcolor: "background.paper",
         }}
       >
-        <LoadingButton
+        <Button
           variant="contained"
           size="small"
-          endIcon={<SendIcon />}
-          loading={status !== "READY"}
-          loadingPosition="end"
-          onClick={() => {
-            dispatch(pushPromptMessage(value));
-            dispatchExecutor(generate({ system: "", prompt: value }));
+          endIcon={controller ? <StopIcon /> : <SendIcon />}
+          onClick={async () => {
+            if (controller) {
+              controller.abort();
+            } else {
+              dispatch(pushPromptMessage(value));
+              const c = new AbortController();
+              setController(c);
+              const dispatchExecutor = executor(dispatch, c);
+              await dispatchExecutor(generate({ system: "", prompt: value }));
+              setController(null);
+            }
           }}
         >
-          Joke
-        </LoadingButton>
-        <LoadingButton
-          variant="contained"
-          size="small"
-          endIcon={<SendIcon />}
-          loading={status !== "READY"}
-          loadingPosition="end"
-          onClick={() =>
-            dispatchExecutor(
-              generateLangCompare({ prompt: 'Compare "Rust" and "Go"' })
-            )
-          }
-        >
-          Send
-        </LoadingButton>
+          Generate
+        </Button>
       </Box>
     </Box>
   );

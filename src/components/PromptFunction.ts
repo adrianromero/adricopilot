@@ -31,7 +31,10 @@ type GenerateProps = {
 
 export const generate =
   ({ system, prompt }: GenerateProps) =>
-  async (dispatch: AppDispatch): Promise<ChatSuccess> => {
+  async (
+    dispatch: AppDispatch,
+    controller?: AbortController
+  ): Promise<ChatSuccess> => {
     const data = {
       model: "llama3",
       system,
@@ -52,6 +55,7 @@ export const generate =
       redirect: "error",
       referrerPolicy: "no-referrer",
       body: JSON.stringify(data),
+      signal: controller?.signal,
     });
 
     const body = response.body;
@@ -77,14 +81,24 @@ export const generate =
       if (value) {
         const chunk = JSON.parse(decoder.decode(value)); // a risk of exception
         const result = chunk.response as string;
-        console.log("done reason " + chunk.done_reason);
         dispatch(addChatMessage(result));
         if (chunk.done as boolean) {
-          const reason = chunk.done_reason as string;
+          const done_reason = chunk.done_reason as string;
+          let description;
+          if (done_reason === "stop") {
+            description = "";
+          } else if (done_reason === "length") {
+            description = "Max tokens generated";
+          } else if (done_reason === "load") {
+            description = "No generation";
+          } else {
+            description = "Unknown done reason";
+          }
+
           info = {
             result: "SUCCESS",
-            description: reason === "length" ? "Max tokens generated" : "",
-            done_reason: reason,
+            description,
+            done_reason,
             total_duration: chunk.done_duration as number,
             load_duration: chunk.load_duration as number,
             prompt_eval_count: chunk.prompt_eval_count as number,
@@ -108,20 +122,32 @@ export const generateLangCompare = ({ prompt }: { prompt: string }) =>
     prompt,
   });
 
-export type Generate = (dispatch: AppDispatch) => Promise<ChatSuccess>;
+export type Generate = (
+  dispatch: AppDispatch,
+  controller?: AbortController
+) => Promise<ChatSuccess>;
 
-export const executor = (dispatch: AppDispatch) => (g: Generate) => {
-  dispatch(startChatMessage());
-  g(dispatch)
-    .then(info => {
+export const executor =
+  (dispatch: AppDispatch, controller?: AbortController) =>
+  async (g: Generate) => {
+    dispatch(startChatMessage());
+    try {
+      const info = await g(dispatch, controller);
       dispatch(successChatMessage(info));
-    })
-    .catch(error => {
+    } catch (error) {
       let description;
       if (error instanceof Error) {
-        description = error.message;
+        if (error.message === "BodyStreamBuffer was aborted") {
+          description = "Generation was aborted";
+        } else if (error.message === "network error") {
+          description = "Generation communication error";
+        } else if (error.message === "Failed to fetch") {
+          description = "Generation cannot be connected";
+        } else {
+          description = "Unknown generation error";
+        }
       } else {
-        description = "Unknown error generating message";
+        description = "Unexpected generation error";
       }
       dispatch(
         failureChatMessage({
@@ -129,7 +155,7 @@ export const executor = (dispatch: AppDispatch) => (g: Generate) => {
           description,
         })
       );
-    });
-};
+    }
+  };
 
 //executor(dispatch)(generate());

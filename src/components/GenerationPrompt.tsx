@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import { Paper } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import type { PromptMessage } from "../features/llm/llmSlice";
 
 export interface GenerationPromptProps {
@@ -28,6 +28,22 @@ export default function GenerationPrompt({
   promptMessage,
 }: GenerationPromptProps): JSX.Element {
   const text = promptMessage.text;
+  let textcomponent;
+  if (!text) {
+    textcomponent = (
+      <Typography variant="caption" display="block">
+        ...
+      </Typography>
+    );
+  } else if (!text.trim()) {
+    textcomponent = (
+      <Typography variant="caption" display="block">
+        Empty prompt...
+      </Typography>
+    );
+  } else {
+    textcomponent = <Markdown>{text}</Markdown>;
+  }
 
   return (
     <Paper
@@ -38,7 +54,7 @@ export default function GenerationPrompt({
         borderRadius: "16px",
       }}
     >
-      <Markdown>{text}</Markdown>
+      {textcomponent}
     </Paper>
   );
 }

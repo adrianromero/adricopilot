@@ -90,7 +90,7 @@ export const generate =
           } else if (done_reason === "length") {
             description = "Max tokens generated";
           } else if (done_reason === "load") {
-            description = "No generation";
+            description = "Nothing generated";
           } else {
             description = "Unknown done reason";
           }
@@ -143,6 +143,8 @@ export const executor =
           description = "Generation communication error";
         } else if (error.message === "Failed to fetch") {
           description = "Generation cannot be connected";
+        } else if (error.message === "signal is aborted without reason") {
+          description = "Generation was aborted before starting";
         } else {
           description = "Unknown generation error";
         }

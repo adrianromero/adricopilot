@@ -15,18 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createTheme, Theme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
-import type {} from "@mui/lab/themeAugmentation";
-
-// ADRICOPILOT custom theme for this app
-const theme: Theme = createTheme({
-  typography: {
-    fontSize: 14,
-    fontWeightLight: 300,
-    fontWeightRegular: 400,
-    fontWeightMedium: 500,
-  },
-});
-
-export default theme;
+.message p {
+  margin-block-start: 0.5rem;
+  margin-block-end: 0.5rem;
+}

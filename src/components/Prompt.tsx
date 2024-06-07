@@ -39,7 +39,7 @@ function Prompt(): JSX.Element {
         display: "flex",
         flexDirection: "column",
         gap: 1,
-        "& .MuiTextField-root": { gap: 1, width: "50ch" },
+        "& .MuiTextField-root": { gap: 1 },
       }}
     >
       <TextField
@@ -67,6 +67,7 @@ function Prompt(): JSX.Element {
             if (controller) {
               controller.abort();
             } else {
+              setValue("");
               dispatch(pushPromptMessage(value));
               const c = new AbortController();
               setController(c);

@@ -21,6 +21,8 @@ import { Chip, Paper, Typography } from "@mui/material";
 import type { ChatMessage } from "../features/llm/llmSlice";
 import DotsPulse from "./DotsPulse";
 
+import generation from "./Generation.module.css";
+
 interface GenerationChatProps {
   chatMessage: ChatMessage;
 }
@@ -76,9 +78,10 @@ export default function GenerationChat({
       sx={{
         p: 1,
         alignSelf: "stretch",
-        backgroundColor: "#e5f6fd",
-        borderRadius: "16px",
+        backgroundColor: "#fcfcfc",
       }}
+      variant="outlined"
+      className={generation.message}
     >
       {textcomponent}
       <div style={{ position: "relative", height: "10px" }}>

@@ -58,13 +58,11 @@ function App(): JSX.Element {
       <Box
         sx={{
           display: "flex",
+          flexDirection: "column",
           flexGrow: 1,
           bgcolor: "background.paper",
         }}
       >
-        <Box sx={{ p: 1 }}>
-          <Prompt />
-        </Box>
         <Box className={scroll.scrollcontainer} sx={{ flexGrow: 1 }}>
           <Stack
             sx={{ p: 1 }}
@@ -74,6 +72,9 @@ function App(): JSX.Element {
           >
             <Generation />
           </Stack>
+        </Box>
+        <Box sx={{ p: 1 }}>
+          <Prompt />
         </Box>
       </Box>
       <ChatErrorDialog />

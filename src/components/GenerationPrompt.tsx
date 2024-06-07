@@ -20,6 +20,8 @@ import Markdown from "react-markdown";
 import { Paper, Typography } from "@mui/material";
 import type { PromptMessage } from "../features/llm/llmSlice";
 
+import generation from "./Generation.module.css";
+
 export interface GenerationPromptProps {
   promptMessage: PromptMessage;
 }
@@ -50,9 +52,10 @@ export default function GenerationPrompt({
       sx={{
         p: 1,
         alignSelf: "end",
-        backgroundColor: "lightgreen",
-        borderRadius: "16px",
+        backgroundColor: "background.paper",
       }}
+      variant="outlined"
+      className={generation.message}
     >
       {textcomponent}
     </Paper>

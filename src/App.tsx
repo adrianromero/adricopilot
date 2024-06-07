@@ -31,6 +31,8 @@ import Prompt from "./components/Prompt";
 import Generation from "./components/Generation";
 import ChatErrorDialog from "./components/ChatErrorDialog";
 
+import scroll from "./components/Scroll.module.css";
+
 function App(): JSX.Element {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -56,24 +58,23 @@ function App(): JSX.Element {
       <Box
         sx={{
           display: "flex",
-          p: 1,
-          gap: 1,
           flexGrow: 1,
           bgcolor: "background.paper",
         }}
       >
-        <Box>
+        <Box sx={{ p: 1 }}>
           <Prompt />
         </Box>
-        <Stack
-          sx={{ flexGrow: 1 }}
-          direction="column"
-          justifyContent="flex-end"
-          alignItems="flex-start"
-          spacing={1}
-        >
-          <Generation />
-        </Stack>
+        <Box className={scroll.scrollcontainer} sx={{ flexGrow: 1 }}>
+          <Stack
+            sx={{ p: 1 }}
+            className={scroll.scrolllist}
+            direction="column"
+            spacing={1}
+          >
+            <Generation />
+          </Stack>
+        </Box>
       </Box>
       <ChatErrorDialog />
     </Box>

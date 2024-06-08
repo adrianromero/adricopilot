@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { JSX } from "react";
+import { JSX, useEffect, useRef } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectChat, selectGenerating } from "../features/llm/llmSlice";
 import GenerationChat from "./GenerationChat";
@@ -24,6 +24,12 @@ import GenerationPrompt from "./GenerationPrompt";
 function Generation(): JSX.Element {
   const chat = useAppSelector(selectChat);
   const generatingChatMessage = useAppSelector(selectGenerating);
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  });
+
   return (
     <>
       {chat.map(message =>
@@ -39,6 +45,7 @@ function Generation(): JSX.Element {
           chatMessage={generatingChatMessage}
         />
       )}
+      <div ref={ref}></div>
     </>
   );
 }

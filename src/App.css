@@ -15,34 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createTheme, Theme } from "@mui/material/styles";
-import type {} from "@mui/lab/themeAugmentation";
-
-// ADRICOPILOT custom theme for this app
-const theme: Theme = createTheme({
-  palette: {
-    primary: {
-      main: "#414358",
-    },
-    secondary: {
-      main: "#afafaf",
-    },
-    error: {
-      main: "#b50e00",
-    },
-    warning: {
-      main: "#a9b500",
-    },
-    info: {
-      main: "#0053b1",
-    },
-    success: {
-      main: "#00b107",
-    },
-  },
-  typography: {
-    fontFamily: "Inter",
-  },
-});
-
-export default theme;
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-VariableFont_slnt\,wght.ttf");
+}

@@ -142,7 +142,7 @@ export const executor =
         } else if (error.message === "network error") {
           description = "Generation communication error";
         } else if (error.message === "Failed to fetch") {
-          description = "Generation cannot be connected";
+          description = "Generation connection error";
         } else if (error.message === "signal is aborted without reason") {
           description = "Generation was aborted before starting";
         } else {

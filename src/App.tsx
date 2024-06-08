@@ -19,19 +19,21 @@ import { JSX } from "react";
 import Box from "@mui/material/Box";
 import {
   AppBar,
-  Button,
+  Container,
   IconButton,
   Stack,
   Toolbar,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
 import Prompt from "./components/Prompt";
 import Generation from "./components/Generation";
 import ChatErrorDialog from "./components/ChatErrorDialog";
 
 import scroll from "./components/Scroll.module.css";
+import "./App.css";
 
 function App(): JSX.Element {
   return (
@@ -48,10 +50,24 @@ function App(): JSX.Element {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              ADRICOPILOT
-            </Typography>
-            <Button color="inherit">Login</Button>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="h6" component="div">
+                ADRICOPILOT
+              </Typography>
+              <Typography
+                variant="caption"
+                component="div"
+                color="secondary"
+                sx={{ marginLeft: 1 }}
+              >
+                SETTINGS
+              </Typography>
+            </Box>
+            <Box>
+              <IconButton size="large" aria-label="Settings" color="inherit">
+                <SettingsOutlinedIcon />
+              </IconButton>
+            </Box>
           </Toolbar>
         </AppBar>
       </Box>
@@ -60,22 +76,23 @@ function App(): JSX.Element {
           display: "flex",
           flexDirection: "column",
           flexGrow: 1,
-          bgcolor: "background.paper",
+          backgroundColor: "background.paper",
         }}
       >
         <Box className={scroll.scrollcontainer} sx={{ flexGrow: 1 }}>
-          <Stack
-            sx={{ p: 1 }}
-            className={scroll.scrolllist}
-            direction="column"
-            spacing={1}
-          >
-            <Generation />
-          </Stack>
+          <Box className={scroll.scrolllist}>
+            <Container>
+              <Stack sx={{ p: 2 }} direction="column" spacing={1}>
+                <Generation />
+              </Stack>
+            </Container>
+          </Box>
         </Box>
-        <Box sx={{ p: 1 }}>
-          <Prompt />
-        </Box>
+        <Container>
+          <Box sx={{ p: 2 }}>
+            <Prompt />
+          </Box>
+        </Container>
       </Box>
       <ChatErrorDialog />
     </Box>

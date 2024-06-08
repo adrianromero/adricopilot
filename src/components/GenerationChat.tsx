@@ -35,7 +35,12 @@ export default function GenerationChat({
     footer = <DotsPulse />;
   } else if (chatMessage.info.result === "ERROR") {
     footer = (
-      <Chip label={chatMessage.info.description} color="error" size="small" />
+      <Chip
+        label={chatMessage.info.description}
+        color="error"
+        size="small"
+        variant="outlined"
+      />
     );
   } else {
     // SUCCESS
@@ -49,6 +54,7 @@ export default function GenerationChat({
             label={chatMessage.info.description}
             color="success"
             size="small"
+            variant="outlined"
           />
         )}
       </>

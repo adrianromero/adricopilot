@@ -47,7 +47,7 @@ function Prompt(): JSX.Element {
         label="Prompt"
         value={value}
         onChange={e => setValue(e.target.value)}
-        variant="filled"
+        variant="outlined"
         multiline
         rows={4}
       />

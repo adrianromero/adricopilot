@@ -37,40 +37,34 @@ import "./App.css";
 
 function App(): JSX.Element {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <Box sx={{ display: "flex" }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
+    <Box sx={{ display: "flex", height: "100vh" }}>
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}
+      >
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" component="div">
+              ADRICOPILOT
+            </Typography>
+          </Box>
+          <Box>
+            <IconButton size="large" aria-label="Settings" color="inherit">
+              <SettingsOutlinedIcon />
             </IconButton>
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="h6" component="div">
-                ADRICOPILOT
-              </Typography>
-              <Typography
-                variant="caption"
-                component="div"
-                color="secondary"
-                sx={{ marginLeft: 1 }}
-              >
-                SETTINGS
-              </Typography>
-            </Box>
-            <Box>
-              <IconButton size="large" aria-label="Settings" color="inherit">
-                <SettingsOutlinedIcon />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-      </Box>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
       <Box
         sx={{
           display: "flex",
@@ -79,6 +73,7 @@ function App(): JSX.Element {
           backgroundColor: "background.paper",
         }}
       >
+        <Toolbar />
         <Box className={scroll.scrollcontainer} sx={{ flexGrow: 1 }}>
           <Box className={scroll.scrolllist}>
             <Container>

@@ -23,20 +23,24 @@ import {
   successChatMessage,
 } from "../features/llm/llmSlice";
 import { AppDispatch } from "../app/store";
+import { OllamaSettings } from "../features/settings/settingsSlice";
 
 type GenerateProps = {
   system: string;
   prompt: string;
 };
 
+class PromptError extends Error {}
+
 export const generate =
-  ({ system, prompt }: GenerateProps) =>
+  (ollama: OllamaSettings, { system, prompt }: GenerateProps) =>
   async (
     dispatch: AppDispatch,
     controller?: AbortController
   ): Promise<ChatSuccess> => {
+    const { ollamaurl, model } = ollama;
     const data = {
-      model: "llama3",
+      model,
       system,
       prompt,
       stream: true,
@@ -45,7 +49,7 @@ export const generate =
       },
     };
 
-    const response = await fetch("http://localhost:11434/api/generate", {
+    const response = await fetch(ollamaurl + "generate", {
       method: "POST",
       mode: "cors",
       cache: "no-cache",
@@ -58,9 +62,27 @@ export const generate =
       signal: controller?.signal,
     });
 
+    const status = response.status;
+    if (status < 200) {
+      throw new PromptError(
+        "Unexpected server generation information response"
+      );
+    }
+    if (status >= 500) {
+      throw new PromptError("Generation server response error");
+    }
+    if (status >= 400) {
+      throw new PromptError("Generation client request error");
+    }
+    if (status >= 300) {
+      throw new PromptError(
+        "Unexpected server generation redirection response"
+      );
+    }
+
     const body = response.body;
     if (body === null) {
-      throw new Error("Error!!!");
+      throw new PromptError("Generation response is empty");
     }
 
     const reader = body.getReader();
@@ -115,8 +137,11 @@ export const generate =
     return info;
   };
 
-export const generateLangCompare = ({ prompt }: { prompt: string }) =>
-  generate({
+export const generateLangCompare = (
+  ollama: OllamaSettings,
+  { prompt }: { prompt: string }
+) =>
+  generate(ollama, {
     system:
       'You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: "1st language features" and  "2nd language features".',
     prompt,
@@ -136,7 +161,9 @@ export const executor =
       dispatch(successChatMessage(info));
     } catch (error) {
       let description;
-      if (error instanceof Error) {
+      if (error instanceof PromptError) {
+        description = error.message;
+      } else if (error instanceof Error) {
         if (error.message === "BodyStreamBuffer was aborted") {
           description = "Generation was aborted";
         } else if (error.message === "network error") {
@@ -145,6 +172,8 @@ export const executor =
           description = "Generation connection error";
         } else if (error.message === "signal is aborted without reason") {
           description = "Generation was aborted before starting";
+        } else if (error.message.includes("Failed to parse URL")) {
+          description = "Generation URL server is wrong";
         } else {
           description = "Unknown generation error";
         }

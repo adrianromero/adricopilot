@@ -26,11 +26,11 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
 import Prompt from "./components/Prompt";
 import Generation from "./components/Generation";
 import ChatErrorDialog from "./components/ChatErrorDialog";
+import Settings from "./components/Settings";
 
 import scroll from "./components/Scroll.module.css";
 import "./App.css";
@@ -58,9 +58,7 @@ function App(): JSX.Element {
             </Typography>
           </Box>
           <Box>
-            <IconButton size="large" aria-label="Settings" color="inherit">
-              <SettingsOutlinedIcon />
-            </IconButton>
+            <Settings />
           </Box>
         </Toolbar>
       </AppBar>

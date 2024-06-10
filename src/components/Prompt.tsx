@@ -26,10 +26,12 @@ import { pushPromptMessage } from "../features/llm/llmSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../app/store";
 import { generate, executor } from "./PromptFunction";
+import { useAppSelector } from "../app/hooks";
+import { selectOllamaSettings } from "../features/settings/settingsSlice";
 
 function Prompt(): JSX.Element {
   const dispatch: AppDispatch = useDispatch();
-
+  const ollama = useAppSelector(selectOllamaSettings);
   const [value, setValue] = useState<string>("");
   const [controller, setController] = useState<AbortController | null>(null);
 
@@ -72,7 +74,9 @@ function Prompt(): JSX.Element {
               const c = new AbortController();
               setController(c);
               const dispatchExecutor = executor(dispatch, c);
-              await dispatchExecutor(generate({ system: "", prompt: value }));
+              await dispatchExecutor(
+                generate(ollama, { system: "", prompt: value })
+              );
               setController(null);
             }
           }}

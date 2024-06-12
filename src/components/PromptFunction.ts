@@ -38,13 +38,15 @@ export const generate =
     dispatch: AppDispatch,
     controller?: AbortController
   ): Promise<ChatSuccess> => {
-    const { ollamaurl, model } = ollama;
+    const { ollamaurl, model, seed, temperature } = ollama;
     const data = {
       model,
       system,
       prompt,
       stream: true,
       options: {
+        seed,
+        temperature,
         // num_predict: 25,
       },
     };

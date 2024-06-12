@@ -29,11 +29,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 import Prompt from "./components/Prompt";
 import Generation from "./components/Generation";
-import ChatErrorDialog from "./components/ChatErrorDialog";
 import Settings from "./components/Settings";
 
 import scroll from "./components/Scroll.module.css";
 import "./App.css";
+import LLMErrorDialog from "./components/LLMErrorDialog";
 
 function App(): JSX.Element {
   return (
@@ -87,7 +87,7 @@ function App(): JSX.Element {
           </Box>
         </Container>
       </Box>
-      <ChatErrorDialog />
+      <LLMErrorDialog />
     </Box>
   );
 }

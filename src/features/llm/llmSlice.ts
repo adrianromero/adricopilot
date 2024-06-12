@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+import type { ChatErrorInfo } from "../../components/ChatErrorDialog";
 export interface ChatGenerating {
   result: "GENERATING";
 }
@@ -51,18 +51,11 @@ export interface ChatMessage {
   info: ChatGenerating | ChatSuccess | ChatError;
 }
 
-export interface LLMAlert {
-  open: boolean;
-  severity: "error" | "info" | "success" | "warning";
-  title: string;
-  description: string;
-}
-
 interface LLMState {
   status: "READY" | "GENERATING";
   generating: ChatMessage | null;
   chat: (ChatMessage | PromptMessage)[];
-  alert: LLMAlert;
+  alert: ChatErrorInfo;
 }
 
 const initialState: LLMState = {

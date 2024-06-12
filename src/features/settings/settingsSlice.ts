@@ -20,6 +20,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface OllamaSettings {
   ollamaurl: string;
   model: string;
+  seed: number | null;
+  temperature: number | null;
 }
 
 const OLLAMAKEY = "adricopilot-ollama-settings";
@@ -28,6 +30,8 @@ function initOllamaSettings(): OllamaSettings {
   return {
     ollamaurl: "http://localhost:11434/api/",
     model: "llama3:latest",
+    seed: null,
+    temperature: null,
   };
 }
 

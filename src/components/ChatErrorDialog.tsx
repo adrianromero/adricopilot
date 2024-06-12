@@ -23,31 +23,37 @@ import {
   Dialog,
   DialogActions,
 } from "@mui/material";
-import { useAppSelector } from "../app/hooks";
-import { closeAlert, selectAlert } from "../features/llm/llmSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../app/store";
 
-function ChatErrorDialog(): JSX.Element | null {
-  const alert = useAppSelector(selectAlert);
-  const dispatch: AppDispatch = useDispatch();
+export interface ChatErrorInfo {
+  open: boolean;
+  severity: "error" | "info" | "success" | "warning";
+  title: string;
+  description: string;
+}
 
-  const handleClose = () => {
-    dispatch(closeAlert());
-  };
+export interface ChatErrorDialogProps extends ChatErrorInfo {
+  handleClose: () => void;
+}
 
+function ChatErrorDialog({
+  open,
+  severity,
+  title,
+  description,
+  handleClose,
+}: ChatErrorDialogProps): JSX.Element | null {
   return (
     <Dialog
-      open={alert.open}
+      open={open}
       onClose={handleClose}
       fullWidth={true}
       maxWidth="xs"
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <Alert severity={alert.severity}>
-        <AlertTitle id="alert-dialog-title">{alert.title}</AlertTitle>
-        <div id="alert-dialog-description">{alert.description}</div>
+      <Alert severity={severity}>
+        <AlertTitle id="alert-dialog-title">{title}</AlertTitle>
+        <div id="alert-dialog-description">{description}</div>
       </Alert>
 
       <DialogActions>

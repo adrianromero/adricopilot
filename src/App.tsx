@@ -17,15 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Box from "@mui/material/Box";
-import {
-  AppBar,
-  Container,
-  IconButton,
-  Stack,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Container, Stack, Toolbar } from "@mui/material";
 
 import Prompt from "./components/Prompt";
 import Generation from "./components/Generation";
@@ -34,29 +26,17 @@ import Settings from "./components/Settings";
 import scroll from "./components/Scroll.module.css";
 import "./App.css";
 import LLMErrorDialog from "./components/LLMErrorDialog";
+import ChatsDrawer from "./components/ChatsDrawer";
+import AppTitle from "./components/AppTitle";
 
 function App(): JSX.Element {
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}
-      >
+      <AppBar position="fixed" color="transparent">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h6" component="div">
-              ADRICOPILOT
-            </Typography>
-          </Box>
+          <ChatsDrawer />
+          <AppTitle sx={{ flexGrow: 1 }} />
+
           <Box>
             <Settings />
           </Box>

@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 
 import SendIcon from "@mui/icons-material/Send";
 import StopIcon from "@mui/icons-material/Stop";
-import { Button, TextField } from "@mui/material";
+import { Button, InputAdornment, TextField } from "@mui/material";
 
 import { pushPromptMessage } from "../features/llm/llmSlice";
 import { useDispatch } from "react-redux";
@@ -35,6 +35,20 @@ function Prompt(): JSX.Element {
   const [value, setValue] = useState<string>("");
   const [controller, setController] = useState<AbortController | null>(null);
 
+  const generateAction = async () => {
+    if (controller) {
+      controller.abort();
+    } else {
+      setValue("");
+      dispatch(pushPromptMessage(value));
+      const c = new AbortController();
+      setController(c);
+      const dispatchExecutor = executor(dispatch, c);
+      await dispatchExecutor(generate(ollama, { system: "", prompt: value }));
+      setController(null);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -46,44 +60,32 @@ function Prompt(): JSX.Element {
     >
       <TextField
         id="standard-basic"
-        label="Prompt"
+        placeholder="How can I help you today?"
         value={value}
         onChange={e => setValue(e.target.value)}
         variant="outlined"
         multiline
-        rows={4}
-      />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 1,
-          bgcolor: "background.paper",
+        rows={2}
+        onKeyUp={e => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            generateAction();
+          }
         }}
-      >
-        <Button
-          variant="contained"
-          size="small"
-          endIcon={controller ? <StopIcon /> : <SendIcon />}
-          onClick={async () => {
-            if (controller) {
-              controller.abort();
-            } else {
-              setValue("");
-              dispatch(pushPromptMessage(value));
-              const c = new AbortController();
-              setController(c);
-              const dispatchExecutor = executor(dispatch, c);
-              await dispatchExecutor(
-                generate(ollama, { system: "", prompt: value })
-              );
-              setController(null);
-            }
-          }}
-        >
-          Generate
-        </Button>
-      </Box>
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Button
+                variant="outlined"
+                size="small"
+                endIcon={controller ? <StopIcon /> : <SendIcon />}
+                onClick={() => generateAction()}
+              >
+                Generate
+              </Button>
+            </InputAdornment>
+          ),
+        }}
+      />
     </Box>
   );
 }

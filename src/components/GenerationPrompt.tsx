@@ -52,7 +52,8 @@ export default function GenerationPrompt({
       sx={{
         p: 1,
         alignSelf: "end",
-        backgroundColor: "background.paper",
+        backgroundColor: "#fcfcfc",
+        borderRadius: 4,
       }}
       variant="outlined"
       className={generation.message}

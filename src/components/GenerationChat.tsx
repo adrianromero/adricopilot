@@ -84,9 +84,10 @@ export default function GenerationChat({
       sx={{
         p: 1,
         alignSelf: "stretch",
-        backgroundColor: "#fcfcfc",
+        backgroundColor: "background.paper",
       }}
-      variant="outlined"
+      elevation={0}
+      variant="elevation"
       className={generation.message}
     >
       {textcomponent}

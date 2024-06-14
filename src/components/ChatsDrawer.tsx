@@ -73,7 +73,7 @@ function ChatsDrawer(): JSX.Element {
                 </ListItemAvatar>
                 <ListItemText
                   primary="New conversation"
-                  secondary="2 messages 10-10-2024"
+                  secondary="2 messages 6/14/2024, 4:27:45 PM"
                 />
               </ListItemButton>
             </ListItem>
@@ -93,7 +93,7 @@ function ChatsDrawer(): JSX.Element {
                 </ListItemAvatar>
                 <ListItemText
                   primary="Saved conversation"
-                  secondary="2 messages 10-10-2024"
+                  secondary="3 messages 6/14/2024, 4:27:45 PM"
                 />
               </ListItemButton>
             </ListItem>

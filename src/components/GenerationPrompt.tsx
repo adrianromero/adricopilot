@@ -17,7 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import { Paper, Typography } from "@mui/material";
+import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
+import FaceIcon from "@mui/icons-material/Face";
 import type { PromptMessage } from "../features/llm/llmSlice";
 
 import generation from "./Generation.module.css";
@@ -48,17 +49,35 @@ export default function GenerationPrompt({
   }
 
   return (
-    <Paper
-      sx={{
-        p: 1,
-        alignSelf: "end",
-        backgroundColor: "#fcfcfc",
-        borderRadius: 4,
-      }}
-      variant="outlined"
-      className={generation.message}
-    >
-      {textcomponent}
-    </Paper>
+    <Box display="flex" flexDirection="column">
+      <Box
+        sx={{
+          alignSelf: "end",
+        }}
+      >
+        <Avatar sx={{ mb: 0.5, bgcolor: "darkcyan", width: 24, height: 24 }}>
+          <FaceIcon fontSize="small" />
+        </Avatar>
+        <Paper
+          sx={{
+            p: 1,
+            backgroundColor: "#fcfcfc",
+            borderRadius: 4,
+          }}
+          variant="outlined"
+          className={generation.message}
+        >
+          {textcomponent}
+        </Paper>
+      </Box>
+      <Typography
+        variant="caption"
+        sx={{
+          alignSelf: "end",
+        }}
+      >
+        {promptMessage.created.toLocaleString()}
+      </Typography>
+    </Box>
   );
 }

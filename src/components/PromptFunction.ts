@@ -92,6 +92,7 @@ export const generate =
     let info: ChatSuccess = {
       result: "SUCCESS",
       description: "Unknown generation information",
+      completed: new Date(),
       done_reason: "unknown",
       total_duration: 0,
       load_duration: 0,
@@ -122,6 +123,7 @@ export const generate =
           info = {
             result: "SUCCESS",
             description,
+            completed: new Date(),
             done_reason,
             total_duration: chunk.done_duration as number,
             load_duration: chunk.load_duration as number,
@@ -186,6 +188,7 @@ export const executor =
         failureChatMessage({
           result: "ERROR",
           description,
+          completed: new Date(),
         })
       );
     }

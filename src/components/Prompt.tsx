@@ -65,7 +65,7 @@ function Prompt(): JSX.Element {
         onChange={e => setValue(e.target.value)}
         variant="outlined"
         multiline
-        rows={2}
+        rows={4}
         onKeyUp={e => {
           if (e.key === "Enter" && !e.shiftKey) {
             generateAction();

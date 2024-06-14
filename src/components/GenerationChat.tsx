@@ -20,11 +20,16 @@ import Markdown from "react-markdown";
 import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
-import "katex/dist/katex.min.css";
+import rehypeHighlight from "rehype-highlight";
+import remarkGfm from "remark-gfm";
 import type { ChatMessage } from "../features/llm/llmSlice";
 import DotsPulse from "./DotsPulse";
 
 import generation from "./Generation.module.css";
+import "katex/dist/katex.min.css";
+import "./highlight.css";
+import "./github.css";
+import "./latex.css";
 
 interface GenerationChatProps {
   chatMessage: ChatMessage;
@@ -45,7 +50,7 @@ export default function GenerationChat({
           alignSelf: "end",
         }}
       >
-        {chatMessage.created.toLocaleString()}
+        {new Date(chatMessage.info.completed).toLocaleString()}
       </Typography>
     );
   } else {
@@ -73,9 +78,6 @@ export default function GenerationChat({
   } else if (chatMessage.info.result === "SUCCESS") {
     footer = (
       <>
-        {/* <IconButton aria-label="delete" size="small">
-            <DeleteIcon fontSize="small" />
-          </IconButton> */}
         {chatMessage.info.description && (
           <Chip
             label={chatMessage.info.description}
@@ -104,7 +106,11 @@ export default function GenerationChat({
     );
   } else {
     textcomponent = (
-      <Markdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+      <Markdown
+        className="markdown-body"
+        remarkPlugins={[remarkMath, remarkGfm]}
+        rehypePlugins={[rehypeKatex, rehypeHighlight]}
+      >
         {text}
       </Markdown>
     );

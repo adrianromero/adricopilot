@@ -76,7 +76,7 @@ export default function GenerationPrompt({
           alignSelf: "end",
         }}
       >
-        {promptMessage.created.toLocaleString()}
+        {new Date(promptMessage.created).toLocaleString()}
       </Typography>
     </Box>
   );

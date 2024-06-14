@@ -24,7 +24,7 @@ export interface ChatGenerating {
 export interface ChatComplete {
   result: string;
   description: string;
-  completed: Date;
+  completed: number;
 }
 
 export interface ChatSuccess extends ChatComplete {
@@ -46,7 +46,7 @@ export interface BaseMessage {
   type: string;
   key: string;
   text: string;
-  created: Date;
+  created: number;
 }
 export interface PromptMessage extends BaseMessage {
   type: "prompt";
@@ -96,7 +96,7 @@ export const llmSlice = createSlice({
         key: generateKey(),
         text: "",
         info: { result: "GENERATING" },
-        created: new Date(),
+        created: new Date().getTime(),
       };
     },
     addChatMessage: (state, action: PayloadAction<string>) => {
@@ -130,7 +130,7 @@ export const llmSlice = createSlice({
         type: "prompt",
         key: generateKey(),
         text: action.payload,
-        created: new Date(),
+        created: new Date().getTime(),
       });
     },
     closeAlert: state => {

@@ -92,7 +92,7 @@ export const generate =
     let info: ChatSuccess = {
       result: "SUCCESS",
       description: "Unknown generation information",
-      completed: new Date(),
+      completed: new Date().getTime(),
       done_reason: "unknown",
       total_duration: 0,
       load_duration: 0,
@@ -104,36 +104,43 @@ export const generate =
     do {
       const { done, value } = await reader.read();
       if (value) {
-        const chunk = JSON.parse(decoder.decode(value)); // a risk of exception
-        const result = chunk.response as string;
-        dispatch(addChatMessage(result));
-        if (chunk.done as boolean) {
-          const done_reason = chunk.done_reason as string;
-          let description;
-          if (done_reason === "stop") {
-            description = "";
-          } else if (done_reason === "length") {
-            description = "Max tokens generated";
-          } else if (done_reason === "load") {
-            description = "Nothing generated";
-          } else {
-            description = "Unknown done reason";
-          }
+        const strvalue = decoder.decode(value).split(/\r?\n/);
+        for (let i = 0; i < strvalue.length; i += 1) {
+          const line = strvalue[i].trim();
+          if (line) {
+            const chunk = JSON.parse(line); // Can throw exception if not JSON
+            const result = chunk.response as string;
+            dispatch(addChatMessage(result));
+            if (chunk.done as boolean) {
+              const done_reason = chunk.done_reason as string;
+              let description;
+              if (done_reason === "stop") {
+                description = "";
+              } else if (done_reason === "length") {
+                description = "Max tokens generated";
+              } else if (done_reason === "load") {
+                description = "Nothing generated";
+              } else {
+                description = "Unknown done reason";
+              }
 
-          info = {
-            result: "SUCCESS",
-            description,
-            completed: new Date(),
-            done_reason,
-            total_duration: chunk.done_duration as number,
-            load_duration: chunk.load_duration as number,
-            prompt_eval_count: chunk.prompt_eval_count as number,
-            prompt_eval_duration: chunk.prompt_eval_duration as number,
-            eval_count: chunk.eval_count as number,
-            eval_duration: chunk.eval_duration as number,
-          };
+              info = {
+                result: "SUCCESS",
+                description,
+                completed: new Date().getTime(),
+                done_reason,
+                total_duration: chunk.done_duration as number,
+                load_duration: chunk.load_duration as number,
+                prompt_eval_count: chunk.prompt_eval_count as number,
+                prompt_eval_duration: chunk.prompt_eval_duration as number,
+                eval_count: chunk.eval_count as number,
+                eval_duration: chunk.eval_duration as number,
+              };
+            }
+          }
         }
       }
+
       if (done) {
         break;
       }
@@ -180,6 +187,7 @@ export const executor =
           description = "Generation URL server is wrong";
         } else {
           description = "Unknown generation error";
+          console.warn(error);
         }
       } else {
         description = "Unexpected generation error";
@@ -188,7 +196,7 @@ export const executor =
         failureChatMessage({
           result: "ERROR",
           description,
-          completed: new Date(),
+          completed: new Date().getTime(),
         })
       );
     }

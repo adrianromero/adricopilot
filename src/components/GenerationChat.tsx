@@ -20,7 +20,6 @@ import Markdown from "react-markdown";
 import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
 import type { ChatMessage } from "../features/llm/llmSlice";
 import DotsPulse from "./DotsPulse";
-import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 
 import generation from "./Generation.module.css";
 

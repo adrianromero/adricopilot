@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { JSX } from "react";
 import Markdown from "react-markdown";
-import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Paper, Typography } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import type { PromptMessage } from "../features/llm/llmSlice";
 

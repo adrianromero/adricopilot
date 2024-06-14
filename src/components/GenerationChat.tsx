@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { JSX } from "react";
 import Markdown from "react-markdown";
 import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import "katex/dist/katex.min.css";
 import type { ChatMessage } from "../features/llm/llmSlice";
 import DotsPulse from "./DotsPulse";
 
@@ -100,7 +103,11 @@ export default function GenerationChat({
       </Typography>
     );
   } else {
-    textcomponent = <Markdown>{text}</Markdown>;
+    textcomponent = (
+      <Markdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+        {text}
+      </Markdown>
+    );
   }
 
   return (

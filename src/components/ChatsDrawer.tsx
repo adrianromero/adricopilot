@@ -27,12 +27,14 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemIcon,
   ListItemButton,
   ListItemText,
   Toolbar,
   Typography,
 } from "@mui/material";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import AddIcon from "@mui/icons-material/Add";
 
 function ChatsDrawer(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
@@ -62,6 +64,21 @@ function ChatsDrawer(): JSX.Element {
                 sx={{
                   borderRadius: 4,
                   border: "2px solid",
+                  borderColor: "blue",
+                }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary="New conversation" />
+              </ListItemButton>
+            </ListItem>{" "}
+            <ListItem key="New conversation 2">
+              <ListItemButton
+                sx={{
+                  borderRadius: 4,
+                  border: "2px solid",
                   borderColor: "darkgray",
                 }}
                 onClick={() => setOpen(false)}
@@ -72,12 +89,12 @@ function ChatsDrawer(): JSX.Element {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary="New conversation"
+                  primary="Saved "
                   secondary="2 messages 6/14/2024, 4:27:45 PM"
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem key="New conversation">
+            <ListItem key="New conversation 3">
               <ListItemButton
                 sx={{
                   borderRadius: 4,

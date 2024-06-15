@@ -19,7 +19,6 @@ import { JSX, useEffect, useRef } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectChat, selectGenerating } from "../features/llm/llmSlice";
 import GenerationChat from "./GenerationChat";
-import GenerationPrompt from "./GenerationPrompt";
 
 function Generation(): JSX.Element {
   const chat = useAppSelector(selectChat);
@@ -32,13 +31,9 @@ function Generation(): JSX.Element {
 
   return (
     <>
-      {chat.map(message =>
-        message.type === "chat" ? (
-          <GenerationChat key={message.key} chatMessage={message} />
-        ) : (
-          <GenerationPrompt key={message.key} promptMessage={message} />
-        )
-      )}
+      {chat.map(message => (
+        <GenerationChat key={message.key} chatMessage={message} />
+      ))}
       {generatingChatMessage && (
         <GenerationChat
           key="generatingmessage"

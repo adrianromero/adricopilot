@@ -42,25 +42,19 @@ export interface ChatError extends ChatComplete {
   result: "ERROR";
 }
 
-export interface BaseMessage {
-  type: string;
+export interface ChatMessage {
   key: string;
+  icon: string;
+  question: string;
   text: string;
   created: number;
-}
-export interface PromptMessage extends BaseMessage {
-  type: "prompt";
-}
-
-export interface ChatMessage extends BaseMessage {
-  type: "chat";
   info: ChatGenerating | ChatSuccess | ChatError;
 }
 
 interface LLMState {
   status: "READY" | "GENERATING";
   generating: ChatMessage | null;
-  chat: (ChatMessage | PromptMessage)[];
+  chat: ChatMessage[];
   alert: ChatErrorInfo;
 }
 
@@ -85,14 +79,21 @@ function generateKey(): string {
   return result;
 }
 
+export type MessageProps = {
+  icon: string;
+  question: string;
+};
+
 export const llmSlice = createSlice({
   name: "llm",
   initialState,
   reducers: {
-    startChatMessage: state => {
+    startChatMessage: (state, action: PayloadAction<MessageProps>) => {
+      const { icon, question } = action.payload;
       state.status = "GENERATING";
       state.generating = {
-        type: "chat",
+        icon,
+        question,
         key: generateKey(),
         text: "",
         info: { result: "GENERATING" },
@@ -125,14 +126,6 @@ export const llmSlice = createSlice({
       state.generating = null;
       state.status = "READY";
     },
-    pushPromptMessage: (state, action: PayloadAction<string>) => {
-      state.chat.push({
-        type: "prompt",
-        key: generateKey(),
-        text: action.payload,
-        created: new Date().getTime(),
-      });
-    },
     closeAlert: state => {
       state.alert.open = false;
     },
@@ -152,7 +145,6 @@ export const {
   addChatMessage,
   successChatMessage,
   failureChatMessage,
-  pushPromptMessage,
   closeAlert,
 } = llmSlice.actions;
 // const value = useAppSelector(selectChat);

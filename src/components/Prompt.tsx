@@ -20,19 +20,41 @@ import Box from "@mui/material/Box";
 
 import SendIcon from "@mui/icons-material/Send";
 import StopIcon from "@mui/icons-material/Stop";
-import { Button, InputAdornment, TextField } from "@mui/material";
+import {
+  IconButton,
+  InputAdornment,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 
-import { pushPromptMessage } from "../features/llm/llmSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../app/store";
-import { generate, executor } from "./PromptFunction";
+import {
+  generateGeneral,
+  generatePhysics,
+  generateJavascript,
+  generateGrader,
+  executor,
+  OllamaGenerate,
+} from "./PromptFunction";
 import { useAppSelector } from "../app/hooks";
 import { selectOllamaSettings } from "../features/settings/settingsSlice";
+
+type Modes = "general" | "physics" | "javascript" | "grader";
+
+const MODEFUNCS: Map<Modes, OllamaGenerate> = new Map([
+  ["general", generateGeneral],
+  ["physics", generatePhysics],
+  ["javascript", generateJavascript],
+  ["grader", generateGrader],
+]);
 
 function Prompt(): JSX.Element {
   const dispatch: AppDispatch = useDispatch();
   const ollama = useAppSelector(selectOllamaSettings);
   const [value, setValue] = useState<string>("");
+  const [mode, setMode] = useState<Modes>("general");
   const [controller, setController] = useState<AbortController | null>(null);
 
   const generateAction = async () => {
@@ -40,11 +62,10 @@ function Prompt(): JSX.Element {
       controller.abort();
     } else {
       setValue("");
-      dispatch(pushPromptMessage(value));
       const c = new AbortController();
       setController(c);
       const dispatchExecutor = executor(dispatch, c);
-      await dispatchExecutor(generate(ollama, { system: "", prompt: value }));
+      await dispatchExecutor(MODEFUNCS.get(mode)!(ollama, { question: value }));
       setController(null);
     }
   };
@@ -58,6 +79,28 @@ function Prompt(): JSX.Element {
         "& .MuiTextField-root": { gap: 1 },
       }}
     >
+      <ToggleButtonGroup
+        exclusive
+        value={mode}
+        onChange={(_evt, newmode) => {
+          setMode(newmode);
+        }}
+        aria-label="generation selection"
+        size="small"
+      >
+        <ToggleButton value="general" aria-label="general">
+          General
+        </ToggleButton>
+        <ToggleButton value="physics" aria-label="maths">
+          Physics
+        </ToggleButton>
+        <ToggleButton value="javascript" aria-label="javascript">
+          Javascript
+        </ToggleButton>
+        <ToggleButton value="grader" aria-label="grader">
+          Grader
+        </ToggleButton>
+      </ToggleButtonGroup>
       <TextField
         id="standard-basic"
         placeholder="How can I help you today?"
@@ -74,14 +117,13 @@ function Prompt(): JSX.Element {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <Button
-                variant="outlined"
-                size="small"
-                endIcon={controller ? <StopIcon /> : <SendIcon />}
-                onClick={() => generateAction()}
-              >
-                Generate
-              </Button>
+              <IconButton size="large" onClick={() => generateAction()}>
+                {controller ? (
+                  <StopIcon fontSize="inherit" />
+                ) : (
+                  <SendIcon fontSize="inherit" />
+                )}
+              </IconButton>
             </InputAdornment>
           ),
         }}

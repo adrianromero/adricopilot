@@ -25,15 +25,29 @@ import {
 import { AppDispatch } from "../app/store";
 import { OllamaSettings } from "../features/settings/settingsSlice";
 
-type GenerateProps = {
+export type Generate = (
+  dispatch: AppDispatch,
+  controller?: AbortController
+) => Promise<ChatSuccess>;
+
+export type GenerateProps = {
   system: string;
   prompt: string;
+  icon: string;
 };
+export type OllamaGenerate = (
+  ollama: OllamaSettings,
+  { question }: { question: string }
+) => Generate;
 
 class PromptError extends Error {}
 
-export const generate =
-  (ollama: OllamaSettings, { system, prompt }: GenerateProps) =>
+const generate =
+  (
+    ollama: OllamaSettings,
+    { system, prompt, icon }: GenerateProps,
+    question: string
+  ) =>
   async (
     dispatch: AppDispatch,
     controller?: AbortController
@@ -51,6 +65,7 @@ export const generate =
       },
     };
 
+    dispatch(startChatMessage({ icon, question }));
     const response = await fetch(ollamaurl + "generate", {
       method: "POST",
       mode: "cors",
@@ -148,25 +163,83 @@ export const generate =
     return info;
   };
 
-export const generateLangCompare = (
+export const generateLangCompare: OllamaGenerate = (
   ollama: OllamaSettings,
-  { prompt }: { prompt: string }
+  { question }: { question: string }
 ) =>
-  generate(ollama, {
-    system:
-      'You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: "1st language features" and  "2nd language features".',
-    prompt,
-  });
+  generate(
+    ollama,
+    {
+      system:
+        'You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: "1st language features" and  "2nd language features".',
+      prompt: question,
+      icon: "langcompare",
+    },
+    question
+  );
 
-export type Generate = (
-  dispatch: AppDispatch,
-  controller?: AbortController
-) => Promise<ChatSuccess>;
+export const generateGeneral: OllamaGenerate = (
+  ollama: OllamaSettings,
+  { question }: { question: string }
+) =>
+  generate(
+    ollama,
+    {
+      system: "",
+      prompt: question,
+      icon: "general",
+    },
+    question
+  );
+
+export const generatePhysics: OllamaGenerate = (
+  ollama: OllamaSettings,
+  { question }: { question: string }
+) =>
+  generate(
+    ollama,
+    {
+      system:
+        "You are a tutor expert in physics and maths. Format all equations, formulas in latex when possible",
+      prompt: question,
+      icon: "physics",
+    },
+    question
+  );
+
+export const generateJavascript: OllamaGenerate = (
+  ollama: OllamaSettings,
+  { question }: { question: string }
+) =>
+  generate(
+    ollama,
+    {
+      icon: "javascript",
+      system:
+        "You are a developer expert in the javascript programing language. Write code examples when required",
+      prompt: question,
+    },
+    question
+  );
+
+export const generateGrader: OllamaGenerate = (
+  ollama: OllamaSettings,
+  { question }: { question: string }
+) =>
+  generate(
+    ollama,
+    {
+      icon: "grader",
+      system:
+        "You are a grader assessing the customer satisfation based on customer comments. Give a numeric score between 0 and 10 to indicate the customer satisfaction. Provide the binary score as a JSON with a single key 'score' with no preamble or explanation.",
+      prompt: `Here is the customer comment: ${question}`,
+    },
+    question
+  );
 
 export const executor =
   (dispatch: AppDispatch, controller?: AbortController) =>
   async (g: Generate) => {
-    dispatch(startChatMessage());
     try {
       const info = await g(dispatch, controller);
       dispatch(successChatMessage(info));
@@ -201,5 +274,3 @@ export const executor =
       );
     }
   };
-
-//executor(dispatch)(generate());

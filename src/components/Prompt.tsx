@@ -40,21 +40,20 @@ import {
 } from "./PromptFunction";
 import { useAppSelector } from "../app/hooks";
 import { selectOllamaSettings } from "../features/settings/settingsSlice";
+import type { Mode } from "../features/llm/llmSlice";
 
-type Modes = "general" | "physics" | "javascript" | "grader";
-
-const MODEFUNCS: Map<Modes, OllamaGenerate> = new Map([
-  ["general", generateGeneral],
-  ["physics", generatePhysics],
-  ["javascript", generateJavascript],
-  ["grader", generateGrader],
-]);
+const MODEFUNCS: Record<Mode, OllamaGenerate> = {
+  general: generateGeneral,
+  physics: generatePhysics,
+  javascript: generateJavascript,
+  grader: generateGrader,
+};
 
 function Prompt(): JSX.Element {
   const dispatch: AppDispatch = useDispatch();
   const ollama = useAppSelector(selectOllamaSettings);
   const [value, setValue] = useState<string>("");
-  const [mode, setMode] = useState<Modes>("general");
+  const [mode, setMode] = useState<Mode>("general");
   const [controller, setController] = useState<AbortController | null>(null);
 
   const generateAction = async () => {
@@ -65,7 +64,7 @@ function Prompt(): JSX.Element {
       const c = new AbortController();
       setController(c);
       const dispatchExecutor = executor(dispatch, c);
-      await dispatchExecutor(MODEFUNCS.get(mode)!(ollama, { question: value }));
+      await dispatchExecutor(MODEFUNCS[mode](ollama, { question: value }));
       setController(null);
     }
   };
@@ -83,7 +82,9 @@ function Prompt(): JSX.Element {
         exclusive
         value={mode}
         onChange={(_evt, newmode) => {
-          setMode(newmode);
+          if (newmode !== null) {
+            setMode(newmode);
+          }
         }}
         aria-label="generation selection"
         size="small"

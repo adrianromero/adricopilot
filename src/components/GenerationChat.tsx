@@ -26,7 +26,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
-import type { ChatMessage } from "../features/llm/llmSlice";
+import type { ChatMessage, Mode } from "../features/llm/llmSlice";
 import DotsPulse from "./DotsPulse";
 
 import generation from "./Generation.module.css";
@@ -39,32 +39,88 @@ interface GenerationChatProps {
   chatMessage: ChatMessage;
 }
 
-const DEFAULTAVATAR = (
-  <Avatar sx={{ mb: 0.5, bgcolor: "darkcyan", width: 24, height: 24 }}>
-    <FaceIcon fontSize="small" />
-  </Avatar>
-);
-
-const AVATARS: Map<string, JSX.Element> = new Map([
-  [
-    "physics",
+const AVATARS: Record<Mode, JSX.Element> = {
+  general: (
+    <Avatar sx={{ mb: 0.5, bgcolor: "darkcyan", width: 24, height: 24 }}>
+      <FaceIcon fontSize="small" />
+    </Avatar>
+  ),
+  physics: (
     <Avatar sx={{ mb: 0.5, bgcolor: "red", width: 24, height: 24 }}>
       <CalculateIcon fontSize="small" />
-    </Avatar>,
-  ],
-  [
-    "javascript",
+    </Avatar>
+  ),
+  javascript: (
     <Avatar sx={{ mb: 0.5, bgcolor: "blue", width: 24, height: 24 }}>
       <CodeIcon fontSize="small" />
-    </Avatar>,
-  ],
-  [
-    "grader",
+    </Avatar>
+  ),
+  grader: (
     <Avatar sx={{ mb: 0.5, bgcolor: "darkyellow", width: 24, height: 24 }}>
       <StarIcon fontSize="small" />
-    </Avatar>,
-  ],
-]);
+    </Avatar>
+  ),
+};
+
+const MarkdownRender = (props: GenerationChatProps) => {
+  const { text } = props.chatMessage;
+  if (!text) {
+    return null;
+  }
+  if (!text.trim()) {
+    return (
+      <Typography variant="caption" display="block">
+        Empty generation...
+      </Typography>
+    );
+  }
+  return (
+    <Markdown
+      className="markdown-body"
+      remarkPlugins={[remarkMath, remarkGfm]}
+      rehypePlugins={[rehypeKatex, rehypeHighlight]}
+    >
+      {text}
+    </Markdown>
+  );
+};
+
+const RENDERS: Record<
+  Mode,
+  (props: GenerationChatProps) => JSX.Element | null
+> = {
+  general: MarkdownRender,
+  physics: MarkdownRender,
+  javascript: MarkdownRender,
+  grader: (props: GenerationChatProps) => {
+    const { text } = props.chatMessage;
+    const { result } = props.chatMessage.info;
+    if (result === "GENERATING") {
+      return (
+        <>
+          <Rating value={0} precision={0.5} disabled />
+          Calculating...
+        </>
+      );
+    }
+    try {
+      return (
+        <Rating
+          value={(JSON.parse(text).score as number) / 2}
+          precision={0.5}
+          readOnly
+        />
+      );
+    } catch (e) {
+      return (
+        <>
+          <Rating value={0} precision={0.5} disabled />
+          Error...
+        </>
+      );
+    }
+  },
+};
 
 export default function GenerationChat({
   chatMessage,
@@ -75,8 +131,6 @@ export default function GenerationChat({
   if (question.trim()) {
     questioncomponent = <Markdown>{question}</Markdown>;
   }
-
-  let avatar = AVATARS.get(chatMessage.icon) || DEFAULTAVATAR;
 
   let footerdate = null;
   if (
@@ -126,38 +180,7 @@ export default function GenerationChat({
     );
   }
 
-  const text = chatMessage.text;
-  let textcomponent;
-  if (!text) {
-    textcomponent = null;
-  } else if (!text.trim()) {
-    textcomponent = (
-      <Typography variant="caption" display="block">
-        Empty generation...
-      </Typography>
-    );
-  } else if (chatMessage.icon === "grader") {
-    try {
-      // This works for GEMMA. Do not know if others work
-      const pepe = text.split("\n").slice(1, -1).join("\n");
-      const rate = JSON.parse(pepe);
-      textcomponent = (
-        <Rating value={(rate.score as number) / 2} precision={0.5} readOnly />
-      );
-    } catch (e) {
-      textcomponent = <Rating value={0} precision={0.5} disabled />;
-    }
-  } else {
-    textcomponent = (
-      <Markdown
-        className="markdown-body"
-        remarkPlugins={[remarkMath, remarkGfm]}
-        rehypePlugins={[rehypeKatex, rehypeHighlight]}
-      >
-        {text}
-      </Markdown>
-    );
-  }
+  const TextComponent = RENDERS[chatMessage.mode];
 
   return (
     <Box display="flex" flexDirection="column">
@@ -172,10 +195,10 @@ export default function GenerationChat({
         className={generation.message}
       >
         <Box display="flex" gap={1} alignItems="center">
-          {avatar}
+          {AVATARS[chatMessage.mode]}
           <Box sx={{ flexGrow: 1 }}> {questioncomponent}</Box>
         </Box>
-        {textcomponent}
+        <TextComponent chatMessage={chatMessage} />
         <div style={{ position: "relative", height: "10px" }}>
           <div style={{ position: "absolute", bottom: 0, right: 0 }}>
             {footer}

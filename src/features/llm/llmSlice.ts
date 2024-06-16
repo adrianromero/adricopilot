@@ -42,9 +42,11 @@ export interface ChatError extends ChatComplete {
   result: "ERROR";
 }
 
+export type Mode = "general" | "physics" | "javascript" | "grader";
+
 export interface ChatMessage {
   key: string;
-  icon: string;
+  mode: Mode;
   question: string;
   text: string;
   created: number;
@@ -80,7 +82,7 @@ function generateKey(): string {
 }
 
 export type MessageProps = {
-  icon: string;
+  mode: Mode;
   question: string;
 };
 
@@ -89,10 +91,10 @@ export const llmSlice = createSlice({
   initialState,
   reducers: {
     startChatMessage: (state, action: PayloadAction<MessageProps>) => {
-      const { icon, question } = action.payload;
+      const { mode, question } = action.payload;
       state.status = "GENERATING";
       state.generating = {
-        icon,
+        mode,
         question,
         key: generateKey(),
         text: "",

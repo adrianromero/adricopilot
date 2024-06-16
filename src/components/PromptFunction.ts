@@ -19,6 +19,7 @@ import {
   addChatMessage,
   ChatSuccess,
   failureChatMessage,
+  Mode,
   startChatMessage,
   successChatMessage,
 } from "../features/llm/llmSlice";
@@ -31,9 +32,10 @@ export type Generate = (
 ) => Promise<ChatSuccess>;
 
 export type GenerateProps = {
+  mode: Mode;
   system: string;
   prompt: string;
-  icon: string;
+  format?: "json";
 };
 export type OllamaGenerate = (
   ollama: OllamaSettings,
@@ -45,7 +47,7 @@ class PromptError extends Error {}
 const generate =
   (
     ollama: OllamaSettings,
-    { system, prompt, icon }: GenerateProps,
+    { mode, system, prompt, format }: GenerateProps,
     question: string
   ) =>
   async (
@@ -57,6 +59,7 @@ const generate =
       model,
       system,
       prompt,
+      format,
       stream: true,
       options: {
         seed,
@@ -65,7 +68,7 @@ const generate =
       },
     };
 
-    dispatch(startChatMessage({ icon, question }));
+    dispatch(startChatMessage({ mode, question }));
     const response = await fetch(ollamaurl + "generate", {
       method: "POST",
       mode: "cors",
@@ -173,7 +176,7 @@ export const generateLangCompare: OllamaGenerate = (
       system:
         'You are a developer expert in programming languages. Format all language comparisons as formatted lists with two sections: "1st language features" and  "2nd language features".',
       prompt: question,
-      icon: "langcompare",
+      mode: "general",
     },
     question
   );
@@ -187,7 +190,7 @@ export const generateGeneral: OllamaGenerate = (
     {
       system: "",
       prompt: question,
-      icon: "general",
+      mode: "general",
     },
     question
   );
@@ -202,7 +205,7 @@ export const generatePhysics: OllamaGenerate = (
       system:
         "You are a tutor expert in physics and maths. Format all equations, formulas in latex when possible",
       prompt: question,
-      icon: "physics",
+      mode: "physics",
     },
     question
   );
@@ -214,7 +217,7 @@ export const generateJavascript: OllamaGenerate = (
   generate(
     ollama,
     {
-      icon: "javascript",
+      mode: "javascript",
       system:
         "You are a developer expert in the javascript programing language. Write code examples when required",
       prompt: question,
@@ -229,10 +232,24 @@ export const generateGrader: OllamaGenerate = (
   generate(
     ollama,
     {
-      icon: "grader",
+      mode: "grader",
       system:
-        "You are a grader assessing the customer satisfation based on customer comments. Give a numeric score between 0 and 10 to indicate the customer satisfaction. Provide the binary score as a JSON with a single key 'score' with no preamble or explanation.",
+        'You are a grader assessing the customer satisfation based on customer comments. Give a numeric score between 0 and 10 to indicate the customer satisfaction. Respond following this JSON format: { "score": number }',
+      //       system: `You are a grader assessing the customer satisfation based on customer comments. Give a numeric score between 0 and 10 to indicate the customer satisfaction.
+      // Respond with the following JSON schema: {
+      // "$schema": "http://json-schema.org/draft-04/schema#",
+      // "type": "object",
+      // "properties": {
+      // "score": {
+      // "type": "integer"
+      // }
+      // },
+      // "required": [
+      // "score"
+      // ]
+      // }`,
       prompt: `Here is the customer comment: ${question}`,
+      format: "json",
     },
     question
   );
